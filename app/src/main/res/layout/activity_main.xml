@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginStart="@dimen/page_margin_start"
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.Barrier
@@ -14,7 +15,7 @@
         app:barrierDirection="end"
         app:barrierMargin="@dimen/barrier_margin"
         app:constraint_referenced_ids="main_base_name_title, main_base_firstname_title,
-        main_base_birthdate_title"/>
+        main_base_birthdate_title, main_base_nationality_title, main_base_occupation_title"/>
 
     <TextView
         android:id="@+id/main_base_title"
@@ -22,8 +23,7 @@
         android:layout_height="wrap_content"
         android:text="@string/main_base_title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/main_base_name_title"
@@ -32,16 +32,14 @@
         android:text="@string/main_base_name_title"
         app:layout_constraintTop_toBottomOf="@id/main_base_title"
         app:layout_constraintStart_toStartOf="parent"
-        android:paddingTop="@dimen/textview_padding"
-        />
+        android:paddingTop="@dimen/textview_padding"/>
 
     <EditText
         android:id="@+id/main_base_name"
         android:layout_width="@dimen/edit_text_min_width"
         android:layout_height="wrap_content"
-        app:layout_constraintBaseline_toBaselineOf="@+id/main_base_name_title"
         app:layout_constraintStart_toEndOf="@+id/base_data_barrier"
-        />
+        app:layout_constraintBottom_toBottomOf="@id/main_base_name_title"/>
 
     <TextView
         android:id="@+id/main_base_firstname_title"
@@ -50,8 +48,14 @@
         android:text="@string/main_base_firstname_title"
         app:layout_constraintTop_toBottomOf="@id/main_base_name_title"
         app:layout_constraintStart_toStartOf="parent"
-        android:paddingTop="@dimen/textview_padding"
-        />
+        android:paddingTop="@dimen/textview_padding"/>
+
+    <EditText
+        android:id="@+id/main_base_firstname"
+        android:layout_width="@dimen/edit_text_min_width"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/base_data_barrier"
+        app:layout_constraintBottom_toBottomOf="@id/main_base_firstname_title"/>
 
     <TextView
         android:id="@+id/main_base_birthdate_title"
@@ -60,8 +64,66 @@
         android:text="@string/main_base_birthdate_title"
         app:layout_constraintTop_toBottomOf="@id/main_base_firstname_title"
         app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="@dimen/textview_padding"/>
+
+    <EditText
+        android:id="@+id/main_base_birthdate"
+        android:layout_width="@dimen/edit_text_min_width"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/base_data_barrier"
+        app:layout_constraintBottom_toBottomOf="@id/main_base_birthdate_title"/>
+
+    <ImageButton
+        android:id="@+id/cake_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/cake"
+        app:layout_constraintStart_toEndOf="@+id/main_base_birthdate"
+        app:layout_constraintBottom_toBottomOf="@+id/main_base_birthdate"/>
+
+
+
+    <TextView
+        android:id="@+id/main_base_nationality_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/main_base_nationality_title"
+        app:layout_constraintTop_toBottomOf="@id/main_base_birthdate_title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="@dimen/textview_padding"/>
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/nationalities"
+        app:layout_constraintBottom_toBottomOf="@+id/main_base_nationality_title"
+        app:layout_constraintEnd_toEndOf="@id/main_base_birthdate"/>
+
+    <TextView
+        android:id="@+id/main_base_occupation_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/main_base_occupation_title"
+        app:layout_constraintTop_toBottomOf="@id/main_base_nationality_title"
+        app:layout_constraintStart_toStartOf="parent"
         android:paddingTop="@dimen/textview_padding"
         />
 
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/main_base_occupation_title"
+        android:orientation="horizontal">
+        <RadioButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/main_base_occupation_student"/>
+        <RadioButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/main_base_occupation_worker"/>
+    </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
