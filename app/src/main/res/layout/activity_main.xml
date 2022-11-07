@@ -54,6 +54,7 @@
         android:id="@+id/main_base_name"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
+        android:hint="@string/main_base_name_title"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_base_name_title"/>
@@ -71,6 +72,7 @@
         android:id="@+id/main_base_firstname"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
+        android:hint="@string/main_base_firstname_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintBottom_toBottomOf="@id/main_base_firstname_title"/>
@@ -182,6 +184,7 @@
         android:id="@+id/additional_mail"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
+        android:hint="@string/additional_email_title"
         app:layout_constraintStart_toEndOf="@id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/additional_email_title"
@@ -245,7 +248,7 @@
         android:textAllCaps="true"
         android:textSize="@dimen/title_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_cancel"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group"
         android:paddingTop="@dimen/textview_padding"
         />
 
@@ -262,6 +265,7 @@
         android:id="@+id/main_specific_school"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
+        android:hint="@string/main_specific_school_title"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_specific_school_title"/>
@@ -279,6 +283,7 @@
         android:id="@+id/main_specific_graduationyear"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
+        android:hint="@string/main_specific_graduationyear_title"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_specific_graduationyear_title"/>
@@ -301,7 +306,7 @@
         android:textAllCaps="true"
         android:textSize="@dimen/title_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_specific_graduationyear_title"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group"
         android:paddingTop="@dimen/textview_padding"
         />
 
@@ -318,6 +323,7 @@
         android:id="@+id/main_specific_compagny"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
+        android:hint="@string/main_specific_compagny_title"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_specific_compagny_title"/>
@@ -335,6 +341,7 @@
         android:id="@+id/main_specific_sector"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
+        android:hint="@string/main_specific_sector_title"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_specific_sector_title"/>
@@ -352,6 +359,7 @@
         android:id="@+id/main_specific_experience"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
+        android:hint="@string/main_specific_experience_title"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_specific_experience_title"/>
