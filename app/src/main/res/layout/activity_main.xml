@@ -137,12 +137,12 @@
         app:layout_constraintTop_toBottomOf="@id/main_base_occupation_title"
         android:orientation="horizontal">
         <RadioButton
-            android:id="@+id/student_button"
+            android:id="@+id/student_choice"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="@string/main_base_occupation_student"/>
         <RadioButton
-            android:id="@+id/worker_button"
+            android:id="@+id/worker_choice"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="@string/main_base_occupation_worker"/>
@@ -155,7 +155,7 @@
         android:id="@+id/additionnal_data_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
     <TextView
         android:id="@+id/additional_title"
         android:text="@string/additional_title"
@@ -289,7 +289,7 @@
         android:id="@+id/worker_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:constraint_referenced_ids="main_specific_workers_title, main_specific_compagny_title,
         main_specific_compagny, main_specific_sector_title, main_specific_sector,
         main_specific_experience_title, main_specific_experience"/>

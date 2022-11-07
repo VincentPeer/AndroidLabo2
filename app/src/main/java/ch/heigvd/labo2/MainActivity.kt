@@ -2,8 +2,11 @@ package ch.heigvd.labo2
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.RadioGroup
 import android.widget.Spinner
+import androidx.constraintlayout.widget.Group
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +27,20 @@ class MainActivity : AppCompatActivity() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             // Apply the adapter to the spinner
             spinner.adapter = adapter
+        }
+
+        val studentGroup = findViewById<Group>(R.id.student_group)
+        val workerGroup = findViewById<Group>(R.id.worker_group)
+        val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
+        radioGroup.setOnCheckedChangeListener { _, choiceId ->
+            when (choiceId) {
+                R.id.student_choice -> {
+                    studentGroup.visibility = View.VISIBLE
+                }
+                R.id.worker_choice -> {
+                    workerGroup.visibility = View.VISIBLE
+                }
+            }
         }
     }
 }
