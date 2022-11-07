@@ -13,6 +13,7 @@
     <string name="main_base_occupation_worker">Employé</string>
 
     <string-array translatable="false" name="nationalities">
+        <item>@string/nationality_empty</item>
         <item>@string/ch</item>
         <item>@string/fr</item>
         <item>@string/de</item>

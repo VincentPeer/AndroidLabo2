@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="@dimen/page_margin_start"
+    android:layout_marginStart="@dimen/page_margin"
+    android:layout_marginEnd="@dimen/page_margin"
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.Barrier
@@ -36,9 +37,10 @@
 
     <EditText
         android:id="@+id/main_base_name"
-        android:layout_width="@dimen/edit_text_min_width"
         android:layout_height="wrap_content"
+        android:layout_width="0dp"
         app:layout_constraintStart_toEndOf="@+id/base_data_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_base_name_title"/>
 
     <TextView
@@ -52,8 +54,9 @@
 
     <EditText
         android:id="@+id/main_base_firstname"
-        android:layout_width="@dimen/edit_text_min_width"
         android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/base_data_barrier"
         app:layout_constraintBottom_toBottomOf="@id/main_base_firstname_title"/>
 
@@ -68,8 +71,10 @@
 
     <EditText
         android:id="@+id/main_base_birthdate"
-        android:layout_width="@dimen/edit_text_min_width"
         android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:focusable="false"
+        app:layout_constraintEnd_toStartOf="@id/cake_button"
         app:layout_constraintStart_toEndOf="@+id/base_data_barrier"
         app:layout_constraintBottom_toBottomOf="@id/main_base_birthdate_title"/>
 
@@ -78,10 +83,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/cake"
-        app:layout_constraintStart_toEndOf="@+id/main_base_birthdate"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/main_base_birthdate"/>
-
-
 
     <TextView
         android:id="@+id/main_base_nationality_title"
@@ -98,6 +101,7 @@
         android:layout_height="wrap_content"
         android:entries="@array/nationalities"
         app:layout_constraintBottom_toBottomOf="@+id/main_base_nationality_title"
+        app:layout_constraintStart_toEndOf="@id/base_data_barrier"
         app:layout_constraintEnd_toEndOf="@id/main_base_birthdate"/>
 
     <TextView
