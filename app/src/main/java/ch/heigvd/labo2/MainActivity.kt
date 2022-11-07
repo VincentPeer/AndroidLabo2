@@ -1,14 +1,12 @@
 package ch.heigvd.labo2
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.RadioGroup
-import android.widget.Spinner
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.view.ViewGroup
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,26 +29,48 @@ class MainActivity : AppCompatActivity() {
             spinner.adapter = adapter
         }
 
-        val additionnalData = findViewById<TextView>(R.id.additional_title)
-        val additionnalDataParams = additionnalData.layoutParams as ConstraintLayout.LayoutParams
+
+        manageUserType()
+
+
+
+        val btn_cancel = findViewById<Button>(R.id.btn_cancel)
+        val parent = btn_cancel.parent
+        btn_cancel.setOnClickListener {
+            clearForm(parent as ViewGroup)
+        }
+
+
+    }
+
+    private fun clearForm(group: ViewGroup) {
+        var i = 0
+        val count = group.childCount
+        while (i < count) {
+            val view = group.getChildAt(i)
+            if (view is EditText) {
+                view.setText("")
+            }
+            ++i
+        }
+    }
+
+    /**
+     * Managing specific data whether the user is a student or a worker
+     */
+    private fun manageUserType() {
         val studentGroup = findViewById<Group>(R.id.student_group)
         val workerGroup = findViewById<Group>(R.id.worker_group)
         val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
         radioGroup.setOnCheckedChangeListener { _, choiceId ->
-            when (choiceId) {
-                R.id.student_choice -> {
-                    studentGroup.visibility = View.VISIBLE
-                    workerGroup.visibility = View.GONE
-                    val graduationYear = findViewById<TextView>(R.id.main_specific_graduationyear_title)
-                    additionnalDataParams.topToBottom = graduationYear.id
-                }
-                R.id.worker_choice -> {
-                    workerGroup.visibility = View.VISIBLE
-                    studentGroup.visibility = View.GONE
-                    val experienceYear = findViewById<TextView>(R.id.main_specific_experience_title)
-                    additionnalDataParams.topToBottom = experienceYear.id
-                }
+            if(choiceId == R.id.student_choice) {
+                studentGroup.visibility = View.VISIBLE
+                workerGroup.visibility = View.GONE
+            } else {
+                workerGroup.visibility = View.VISIBLE
+                studentGroup.visibility = View.GONE
             }
         }
     }
+
 }

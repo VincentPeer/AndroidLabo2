@@ -150,6 +150,15 @@
             android:text="@string/main_base_occupation_worker"/>
     </RadioGroup>
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/end_of_base_data_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="radio_group, main_specific_graduationyear_title,
+        main_specific_experience_title"
+        />
+
 
 
     <!-- ADDITIONAL DATA -->
@@ -166,7 +175,7 @@
         android:textAllCaps="true"
         android:textSize="@dimen/title_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radio_group"
+        app:layout_constraintTop_toBottomOf="@+id/end_of_base_data_barrier"
         android:paddingTop="@dimen/textview_padding"
         />
 
@@ -277,7 +286,8 @@
         android:text="@string/main_specific_graduationyear_title"
         app:layout_constraintTop_toBottomOf="@id/main_specific_school_title"
         app:layout_constraintStart_toStartOf="parent"
-        android:paddingTop="@dimen/textview_padding"/>
+        android:paddingTop="@dimen/textview_padding"
+        android:paddingBottom="@dimen/textview_padding"/>
 
     <EditText
         android:id="@+id/main_specific_graduationyear"
@@ -353,7 +363,8 @@
         android:text="@string/main_specific_experience_title"
         app:layout_constraintTop_toBottomOf="@id/main_specific_sector_title"
         app:layout_constraintStart_toStartOf="parent"
-        android:paddingTop="@dimen/textview_padding"/>
+        android:paddingTop="@dimen/textview_padding"
+        android:paddingBottom="@dimen/textview_padding"/>
 
     <EditText
         android:id="@+id/main_specific_experience"
