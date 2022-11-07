@@ -12,6 +12,15 @@
 
 
     <!-- BASE DATA -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/base_data_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="data_barrier, main_base_title, main_base_name_title,
+            main_base_name, main_base_firstname_title, main_base_firstname,
+        main_base_birthdate_title, main_base_birthdate, cake_button, main_base_nationality_title,
+        spinner, main_base_occupation_title, radio_group"/>
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/data_barrier"
@@ -80,6 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:focusable="false"
+        android:hint="@string/main_base_birthdate_title"
         app:layout_constraintEnd_toStartOf="@id/cake_button"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintBottom_toBottomOf="@id/main_base_birthdate_title"/>
@@ -127,17 +137,25 @@
         app:layout_constraintTop_toBottomOf="@id/main_base_occupation_title"
         android:orientation="horizontal">
         <RadioButton
+            android:id="@+id/student_button"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="@string/main_base_occupation_student"/>
         <RadioButton
+            android:id="@+id/worker_button"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="@string/main_base_occupation_worker"/>
     </RadioGroup>
 
-    <!-- ADDITIONAL DATA -->
 
+
+    <!-- ADDITIONAL DATA -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/additionnal_data_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
     <TextView
         android:id="@+id/additional_title"
         android:text="@string/additional_title"
@@ -208,5 +226,134 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_cancel"
         />
+
+
+
+    <!-- STUDENT SPECIFIC DATA -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/student_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="main_specific_students_title, main_specific_school_title,
+        main_specific_school, main_specific_graduationyear_title, main_specific_graduationyear"/>
+    <TextView
+        android:id="@+id/main_specific_students_title"
+        android:text="@string/main_specific_students_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textSize="@dimen/title_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_cancel"
+        android:paddingTop="@dimen/textview_padding"
+        />
+
+    <TextView
+        android:id="@+id/main_specific_school_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/main_specific_school_title"
+        app:layout_constraintTop_toBottomOf="@id/main_specific_students_title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="@dimen/textview_padding"/>
+
+    <EditText
+        android:id="@+id/main_specific_school"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toEndOf="@+id/data_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/main_specific_school_title"/>
+
+    <TextView
+        android:id="@+id/main_specific_graduationyear_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/main_specific_graduationyear_title"
+        app:layout_constraintTop_toBottomOf="@id/main_specific_school_title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="@dimen/textview_padding"/>
+
+    <EditText
+        android:id="@+id/main_specific_graduationyear"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toEndOf="@+id/data_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/main_specific_graduationyear_title"/>
+
+
+    <!-- WORKER SPECIFIC DATA -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/worker_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="main_specific_workers_title, main_specific_compagny_title,
+        main_specific_compagny, main_specific_sector_title, main_specific_sector,
+        main_specific_experience_title, main_specific_experience"/>
+    <TextView
+        android:id="@+id/main_specific_workers_title"
+        android:text="@string/main_specific_workers_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textSize="@dimen/title_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_specific_graduationyear_title"
+        android:paddingTop="@dimen/textview_padding"
+        />
+
+    <TextView
+        android:id="@+id/main_specific_compagny_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/main_specific_compagny_title"
+        app:layout_constraintTop_toBottomOf="@id/main_specific_workers_title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="@dimen/textview_padding"/>
+
+    <EditText
+        android:id="@+id/main_specific_compagny"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toEndOf="@+id/data_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/main_specific_compagny_title"/>
+
+    <TextView
+        android:id="@+id/main_specific_sector_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/main_specific_sector_title"
+        app:layout_constraintTop_toBottomOf="@id/main_specific_compagny_title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="@dimen/textview_padding"/>
+
+    <EditText
+        android:id="@+id/main_specific_sector"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toEndOf="@+id/data_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/main_specific_sector_title"/>
+
+    <TextView
+        android:id="@+id/main_specific_experience_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/main_specific_experience_title"
+        app:layout_constraintTop_toBottomOf="@id/main_specific_sector_title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="@dimen/textview_padding"/>
+
+    <EditText
+        android:id="@+id/main_specific_experience"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toEndOf="@+id/data_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/main_specific_experience_title"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

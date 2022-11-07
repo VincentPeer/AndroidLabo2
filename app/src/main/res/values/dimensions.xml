@@ -3,5 +3,5 @@
     <dimen name="page_margin">5dp</dimen>
     <dimen name="textview_padding">20dp</dimen>
     <dimen name="barrier_margin">25dp</dimen>
-    <dimen name="title_size">20dp</dimen>
+    <dimen name="title_size">18sp</dimen>
 </resources>
