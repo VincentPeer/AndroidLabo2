@@ -9,8 +9,12 @@
     android:layout_marginEnd="@dimen/page_margin"
     tools:context=".MainActivity">
 
+
+
+    <!-- BASE DATA -->
+
     <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/base_data_barrier"
+        android:id="@+id/data_barrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="end"
@@ -23,6 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/main_base_title"
+        android:textAllCaps="true"
+        android:textSize="@dimen/title_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -39,7 +45,7 @@
         android:id="@+id/main_base_name"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
-        app:layout_constraintStart_toEndOf="@+id/base_data_barrier"
+        app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_base_name_title"/>
 
@@ -57,7 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/base_data_barrier"
+        app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintBottom_toBottomOf="@id/main_base_firstname_title"/>
 
     <TextView
@@ -75,7 +81,7 @@
         android:layout_width="0dp"
         android:focusable="false"
         app:layout_constraintEnd_toStartOf="@id/cake_button"
-        app:layout_constraintStart_toEndOf="@+id/base_data_barrier"
+        app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintBottom_toBottomOf="@id/main_base_birthdate_title"/>
 
     <ImageButton
@@ -101,7 +107,7 @@
         android:layout_height="wrap_content"
         android:entries="@array/nationalities"
         app:layout_constraintBottom_toBottomOf="@+id/main_base_nationality_title"
-        app:layout_constraintStart_toEndOf="@id/base_data_barrier"
+        app:layout_constraintStart_toEndOf="@id/data_barrier"
         app:layout_constraintEnd_toEndOf="@id/main_base_birthdate"/>
 
     <TextView
@@ -129,5 +135,78 @@
             android:layout_width="wrap_content"
             android:text="@string/main_base_occupation_worker"/>
     </RadioGroup>
+
+    <!-- ADDITIONAL DATA -->
+
+    <TextView
+        android:id="@+id/additional_title"
+        android:text="@string/additional_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textSize="@dimen/title_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group"
+        android:paddingTop="@dimen/textview_padding"
+        />
+
+    <TextView
+        android:id="@+id/additional_email_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/additional_email_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/additional_title"
+        android:paddingTop="@dimen/textview_padding"
+        />
+
+    <EditText
+        android:id="@+id/additional_mail"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toEndOf="@id/data_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/additional_email_title"
+        />
+
+    <TextView
+        android:id="@+id/additional_remarks_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/additional_remarks_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/additional_email_title"
+        android:paddingTop="@dimen/textview_padding"
+        />
+
+    <EditText
+        android:id="@+id/additional_remarks"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/additional_remarks_title"
+        />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_cancel"
+        app:layout_constraintTop_toBottomOf="@+id/additional_remarks"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_ok"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        />
+
+    <Button
+        android:id="@+id/btn_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_ok"
+        app:layout_constraintTop_toBottomOf="@+id/additional_remarks"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_cancel"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
