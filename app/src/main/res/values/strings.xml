@@ -38,6 +38,7 @@
 
     <string name="sectors_empty">Sélectionner</string>
     <string-array name="sectors">
+        <item>@string/sectors_empty</item>
         <item>@string/agriculture</item>
         <item>@string/art</item>
         <item>@string/construction</item>

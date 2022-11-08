@@ -20,7 +20,7 @@
         app:constraint_referenced_ids="data_barrier, main_base_title, main_base_name_title,
             main_base_name, main_base_firstname_title, main_base_firstname,
         main_base_birthdate_title, main_base_birthdate, cake_button, main_base_nationality_title,
-        spinner, main_base_occupation_title, radio_group"/>
+        nationality_spinner, main_base_occupation_title, radio_group"/>
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/data_barrier"
@@ -114,13 +114,13 @@
         android:paddingTop="@dimen/textview_padding"/>
 
     <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="wrap_content"
+        android:id="@+id/nationality_spinner"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:entries="@array/nationalities"
         app:layout_constraintBottom_toBottomOf="@+id/main_base_nationality_title"
         app:layout_constraintStart_toEndOf="@id/data_barrier"
-        app:layout_constraintEnd_toEndOf="@id/main_base_birthdate"/>
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/main_base_occupation_title"
@@ -306,7 +306,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:constraint_referenced_ids="main_specific_workers_title, main_specific_compagny_title,
-        main_specific_compagny, main_specific_sector_title, main_specific_sector,
+        main_specific_compagny, main_specific_sector_title, sector_spinner,
         main_specific_experience_title, main_specific_experience"/>
     <TextView
         android:id="@+id/main_specific_workers_title"
@@ -347,14 +347,14 @@
         app:layout_constraintStart_toStartOf="parent"
         android:paddingTop="@dimen/textview_padding"/>
 
-    <EditText
-        android:id="@+id/main_specific_sector"
-        android:layout_height="wrap_content"
+    <Spinner
+        android:id="@+id/sector_spinner"
         android:layout_width="0dp"
-        android:hint="@string/main_specific_sector_title"
-        app:layout_constraintStart_toEndOf="@+id/data_barrier"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/main_specific_sector_title"/>
+        android:layout_height="wrap_content"
+        android:entries="@array/sectors"
+        app:layout_constraintBottom_toBottomOf="@+id/main_specific_sector_title"
+        app:layout_constraintStart_toEndOf="@id/data_barrier"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/main_specific_experience_title"

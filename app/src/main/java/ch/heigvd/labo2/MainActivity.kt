@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Nationalities management
-        val spinner = findViewById<Spinner>(R.id.spinner)
+        val spinner = findViewById<Spinner>(R.id.nationality_spinner)
 
         // https://developer.android.com/develop/ui/views/components/spinner
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -33,14 +33,11 @@ class MainActivity : AppCompatActivity() {
         manageUserType()
 
 
-
         val btn_cancel = findViewById<Button>(R.id.btn_cancel)
         val parent = btn_cancel.parent
         btn_cancel.setOnClickListener {
             clearForm(parent as ViewGroup)
         }
-
-
     }
 
     private fun clearForm(group: ViewGroup) {
@@ -50,6 +47,8 @@ class MainActivity : AppCompatActivity() {
             val view = group.getChildAt(i)
             if (view is EditText) {
                 view.setText("")
+            } else if(view is Spinner) {
+                view.setSelection(0) // Reset to "selection" state
             }
             ++i
         }
