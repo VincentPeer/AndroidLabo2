@@ -6,9 +6,12 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
+import ch.heigvd.labo2.Model.Person
 
 
 class MainActivity : AppCompatActivity() {
+    //val people: List<Person> = listOf<Person>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -33,11 +36,21 @@ class MainActivity : AppCompatActivity() {
         manageUserType()
 
 
-        val btn_cancel = findViewById<Button>(R.id.btn_cancel)
-        val parent = btn_cancel.parent
-        btn_cancel.setOnClickListener {
+        val btnCancel = findViewById<Button>(R.id.btn_cancel)
+        val parent = btnCancel.parent
+        btnCancel.setOnClickListener {
             clearForm(parent as ViewGroup)
         }
+
+        val btnOk = findViewById<Button>(R.id.btn_ok)
+        btnOk.setOnClickListener {
+            addNewPerson()
+        }
+    }
+
+    private fun addNewPerson() {
+        val name: String = findViewById<EditText>(R.id.main_base_name).toString()
+        System.out.println("name : $name")
     }
 
     private fun clearForm(group: ViewGroup) {
