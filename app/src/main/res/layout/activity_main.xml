@@ -46,6 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/main_base_name_title"
+        android:lines="1"
         app:layout_constraintTop_toBottomOf="@id/main_base_title"
         app:layout_constraintStart_toStartOf="parent"
         android:paddingTop="@dimen/textview_padding"/>
@@ -55,9 +56,12 @@
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:hint="@string/main_base_name_title"
+        android:inputType="text"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/main_base_name_title"/>
+        app:layout_constraintBottom_toBottomOf="@id/main_base_name_title"
+
+        />
 
     <TextView
         android:id="@+id/main_base_firstname_title"
@@ -73,6 +77,8 @@
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:hint="@string/main_base_firstname_title"
+        android:maxLines="1"
+        android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintBottom_toBottomOf="@id/main_base_firstname_title"/>
@@ -88,13 +94,15 @@
 
     <EditText
         android:id="@+id/main_base_birthdate"
-        android:layout_height="wrap_content"
         android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:focusable="false"
         android:hint="@string/main_base_birthdate_title"
+        android:inputType="date"
+        app:layout_constraintBottom_toBottomOf="@id/main_base_birthdate_title"
         app:layout_constraintEnd_toStartOf="@id/cake_button"
-        app:layout_constraintStart_toEndOf="@+id/data_barrier"
-        app:layout_constraintBottom_toBottomOf="@id/main_base_birthdate_title"/>
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/data_barrier" />
 
     <ImageButton
         android:id="@+id/cake_button"
@@ -194,6 +202,7 @@
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:hint="@string/additional_email_title"
+        android:inputType="textEmailAddress"
         app:layout_constraintStart_toEndOf="@id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/additional_email_title"
@@ -215,6 +224,8 @@
         android:layout_width="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:maxLines="5"
+        android:inputType="textMultiLine"
         app:layout_constraintTop_toBottomOf="@id/additional_remarks_title"
         />
 
@@ -275,6 +286,7 @@
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:hint="@string/main_specific_school_title"
+        android:inputType="text"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_specific_school_title"/>
@@ -294,6 +306,7 @@
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:hint="@string/main_specific_graduationyear_title"
+        android:inputType="number"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_specific_graduationyear_title"/>
@@ -334,6 +347,7 @@
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:hint="@string/main_specific_compagny_title"
+        android:inputType="text"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_specific_compagny_title"/>
@@ -371,6 +385,7 @@
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:hint="@string/main_specific_experience_title"
+        android:inputType="number"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/main_specific_experience_title"/>
