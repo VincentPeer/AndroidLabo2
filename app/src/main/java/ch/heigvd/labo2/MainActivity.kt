@@ -14,13 +14,15 @@ import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
-    private var people = mutableListOf<Person>(Person.exampleStudent, Person.exampleWorker)
-    private var personId: Int = -1
+    private lateinit var personType: String
+    private lateinit var person: Person
+    private var nationality = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Date selection
         val setBirthday = findViewById<ImageButton>(R.id.cake_button)
         setBirthday.setOnClickListener {
 
@@ -38,26 +40,46 @@ class MainActivity : AppCompatActivity() {
                     .setOpenAt(defaultDate)
             constraintsBuilder.build()
             MaterialDatePicker.Builder.datePicker().setSelection(defaultDate)
-            .setCalendarConstraints(constraintsBuilder.build()).build().show(supportFragmentManager, "tag");
+                .setCalendarConstraints(constraintsBuilder.build()).build().show(supportFragmentManager, "tag");
         }
 
+        // Nationality selection
+        val spinner = findViewById<Spinner>(R.id.nationality_spinner)
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
+                if(pos == 0)
+                    return
+                nationality = parent.getItemAtPosition(pos).toString()
+                // An item was selected. You can retrieve the selected item using
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+            }
+        }
+
+        // User type selection
         val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
         radioGroup.setOnCheckedChangeListener { _, choiceId ->
             manageUserType(choiceId)
         }
 
+        // Delete every field when cancel button is applied
         val btnCancel = findViewById<Button>(R.id.btn_cancel)
         val parent = btnCancel.parent
         btnCancel.setOnClickListener {
             clearForm(parent as ViewGroup)
         }
 
+        // Create a new person from written data when ok button ok is applied
         val btnOk = findViewById<Button>(R.id.btn_ok)
         btnOk.setOnClickListener {
             addNewPerson()
         }
     }
 
+    /**
+     *
+     */
     private fun addNewPerson() {
         val name: String = findViewById<EditText>(R.id.main_base_name).text.toString()
         val firstName: String = findViewById<EditText>(R.id.main_base_firstname).text.toString()
@@ -66,40 +88,19 @@ class MainActivity : AppCompatActivity() {
             set(Calendar.YEAR, 1996)
             set(Calendar.MONTH, Calendar.JUNE)
             set(Calendar.DAY_OF_MONTH, 12) }
-        val nationality = getNationality()
         val email: String = findViewById<EditText>(R.id.additional_mail).text.toString()
         val remark: String = findViewById<EditText>(R.id.additional_remarks).text.toString()
-        if(personId == findViewById<RadioButton>(R.id.student_group).id) {
+        if(personType == "student") {
             val university: String = findViewById<EditText>(R.id.main_specific_school).text.toString()
             val graduationYear: Int = findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt()
-            val student =  Student(name, firstName,birthday, nationality, university, graduationYear, email, remark)
-            people.add(student)
+            person =  Student(name, firstName,birthday, this.nationality, university, graduationYear, email, remark)
+            System.out.println(person.toString())
         }
     }
 
-
-    // Nationalities management
-    private fun getNationality() : String {
-        val spinner = findViewById<Spinner>(R.id.nationality_spinner)
-        var nationality: String = ""
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                adapterView: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                nationality = spinner.getItemAtPosition(position).toString()
-            }
-
-            override fun onNothingSelected(adapterView: AdapterView<*>?) {
-                // Le Spinner ne permet pas de « désélectionner » une sélection
-                // ce callback est appelé uniquement dans le cas ou l’option sélectionnée est retirée du Spinner
-            }
-        }
-        return nationality
-    }
-
+    /**
+     *
+     */
     private fun clearForm(group: ViewGroup) {
         var i = 0
         val count = group.childCount
@@ -123,10 +124,12 @@ class MainActivity : AppCompatActivity() {
         if(choiceId == R.id.student_choice) {
             studentGroup.visibility = View.VISIBLE
             workerGroup.visibility = View.GONE
+            this.personType = "student"
         } else {
             workerGroup.visibility = View.VISIBLE
             studentGroup.visibility = View.GONE
+            this.personType = "worker"
         }
-        this.personId = choiceId
     }
 }
+
