@@ -10,10 +10,16 @@ import ch.heigvd.labo2.Model.Person
 import ch.heigvd.labo2.Model.Student
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
+import java.text.SimpleDateFormat
 import java.util.*
 
 
+
 class MainActivity : AppCompatActivity() {
+
+
+    private lateinit var customDatePickerBuilder: CustomDatePickerBuilder
+
     private lateinit var personType: String
     private lateinit var person: Person
     private var nationality = ""
@@ -23,24 +29,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Date selection
-        val setBirthday = findViewById<ImageButton>(R.id.cake_button)
-        setBirthday.setOnClickListener {
+        customDatePickerBuilder = CustomDatePickerBuilder(
+            MaterialDatePicker.Builder.datePicker(),
+            findViewById(R.id.main_base_birthdate))
 
-            val today = MaterialDatePicker.todayInUtcMilliseconds()
-            val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-
-            calendar.timeInMillis = today
-            calendar[Calendar.DAY_OF_MONTH] = 1
-            calendar[Calendar.MONTH] = Calendar.JANUARY
-            calendar[Calendar.YEAR] = 1996
-            val defaultDate = calendar.timeInMillis
-
-            val constraintsBuilder =
-                CalendarConstraints.Builder()
-                    .setOpenAt(defaultDate)
-            constraintsBuilder.build()
-            MaterialDatePicker.Builder.datePicker().setSelection(defaultDate)
-                .setCalendarConstraints(constraintsBuilder.build()).build().show(supportFragmentManager, "tag");
+        findViewById<ImageButton>(R.id.cake_button).setOnClickListener {
+            customDatePickerBuilder.getPicker().show(supportFragmentManager, null)
         }
 
         // Nationality selection
@@ -131,5 +125,66 @@ class MainActivity : AppCompatActivity() {
             this.personType = "worker"
         }
     }
-}
 
+    private class CustomDatePickerBuilder(
+        val matDatePicker: MaterialDatePicker.Builder<Long>,
+        val dateField: EditText
+        ) {
+        private val dateFormat: String = "dd MMMM yyyy"
+        private val maxAge = 80
+        private val minAge = 15
+        private val today = MaterialDatePicker.todayInUtcMilliseconds()
+
+        private var constraints = CalendarConstraints.Builder()
+
+        fun configure(openAt: Calendar) {
+            constraints
+            .setOpenAt(openAt.timeInMillis)
+                .setStart(startDate().timeInMillis)
+                .setEnd(endDate().timeInMillis)
+        }
+
+        fun getPicker(): MaterialDatePicker<Long> {
+
+            val openAt: Calendar
+            val sdf = SimpleDateFormat(dateFormat, Locale.getDefault())
+            if (!dateField.text.isEmpty()) {
+                sdf.parse(dateField.text.toString())
+                openAt = sdf.calendar
+            } else {
+                openAt = endDate()
+            }
+
+            constraints
+                .setOpenAt(openAt.timeInMillis)
+                .setStart(startDate().timeInMillis)
+                .setEnd(endDate().timeInMillis)
+
+            val picker = matDatePicker
+                .setCalendarConstraints(constraints.build())
+                .build()
+
+            picker.addOnPositiveButtonClickListener {
+                val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
+                val date = parser.format(it)
+                dateField.setText(date.toString())
+            }
+
+            return picker
+        }
+
+        private fun startDate(): Calendar {
+            val out = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+            out.timeInMillis = today
+            out[Calendar.YEAR] = out[Calendar.YEAR] - maxAge
+            return out
+        }
+
+        private fun endDate(): Calendar {
+            val out = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+            out.timeInMillis = today
+            out[Calendar.YEAR] = out[Calendar.YEAR] - minAge
+            return out
+        }
+    }
+}

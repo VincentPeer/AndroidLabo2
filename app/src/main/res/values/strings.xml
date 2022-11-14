@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name">Labo 2</string>
+    <string name="app_dateFormat">dd MMMM yyyy</string>
 
     <string name="main_base_title">Données de base</string>
     <string name="main_base_name_title">Nom</string>
