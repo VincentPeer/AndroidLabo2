@@ -10,6 +10,7 @@ import ch.heigvd.labo2.Model.Person
 import ch.heigvd.labo2.Model.Student
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -137,17 +138,10 @@ class MainActivity : AppCompatActivity() {
 
         private var constraints = CalendarConstraints.Builder()
 
-        fun configure(openAt: Calendar) {
-            constraints
-            .setOpenAt(openAt.timeInMillis)
-                .setStart(startDate().timeInMillis)
-                .setEnd(endDate().timeInMillis)
-        }
-
         fun getPicker(): MaterialDatePicker<Long> {
 
             val openAt: Calendar
-            val sdf = SimpleDateFormat(dateFormat, Locale.getDefault())
+            val sdf = SimpleDateFormat(dateFormat, Locale.US)
             if (!dateField.text.isEmpty()) {
                 sdf.parse(dateField.text.toString())
                 openAt = sdf.calendar
