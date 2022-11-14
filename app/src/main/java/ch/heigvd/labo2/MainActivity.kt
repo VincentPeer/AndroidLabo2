@@ -8,8 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import ch.heigvd.labo2.Model.Person
 import ch.heigvd.labo2.Model.Student
+import ch.heigvd.labo2.Model.Worker
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -17,42 +19,26 @@ class MainActivity : AppCompatActivity() {
     private lateinit var personType: String
     private lateinit var person: Person
     private var nationality = ""
+    private var sector = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // Date selection
-        val setBirthday = findViewById<ImageButton>(R.id.cake_button)
-        setBirthday.setOnClickListener {
-
-            val today = MaterialDatePicker.todayInUtcMilliseconds()
-            val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-
-            calendar.timeInMillis = today
-            calendar[Calendar.DAY_OF_MONTH] = 1
-            calendar[Calendar.MONTH] = Calendar.JANUARY
-            calendar[Calendar.YEAR] = 1996
-            val defaultDate = calendar.timeInMillis
-
-            val constraintsBuilder =
-                CalendarConstraints.Builder()
-                    .setOpenAt(defaultDate)
-            constraintsBuilder.build()
-            MaterialDatePicker.Builder.datePicker().setSelection(defaultDate)
-                .setCalendarConstraints(constraintsBuilder.build()).build().show(supportFragmentManager, "tag");
+        val date = findViewById<ImageButton>(R.id.cake_button)
+        date.setOnClickListener {
+            manageCalendar()
         }
 
         // Nationality selection
-        val spinner = findViewById<Spinner>(R.id.nationality_spinner)
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        val nationalitySpinner = findViewById<Spinner>(R.id.nationality_spinner)
+        nationalitySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 if(pos == 0)
                     return
                 nationality = parent.getItemAtPosition(pos).toString()
-                // An item was selected. You can retrieve the selected item using
             }
-
             override fun onNothingSelected(parent: AdapterView<*>) {
             }
         }
@@ -61,6 +47,18 @@ class MainActivity : AppCompatActivity() {
         val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
         radioGroup.setOnCheckedChangeListener { _, choiceId ->
             manageUserType(choiceId)
+        }
+
+        // Worker sector selection
+        val sectorSpinner = findViewById<Spinner>(R.id.sector_spinner)
+        sectorSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
+                if(pos == 0)
+                    return
+                sector = parent.getItemAtPosition(pos).toString()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+            }
         }
 
         // Delete every field when cancel button is applied
@@ -77,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     /**
      *
      */
@@ -91,11 +90,15 @@ class MainActivity : AppCompatActivity() {
         val email: String = findViewById<EditText>(R.id.additional_mail).text.toString()
         val remark: String = findViewById<EditText>(R.id.additional_remarks).text.toString()
         if(personType == "student") {
-            val university: String = findViewById<EditText>(R.id.main_specific_school).text.toString()
-            val graduationYear: Int = findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt()
+            val university = findViewById<EditText>(R.id.main_specific_school).text.toString()
+            val graduationYear = findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt()
             person =  Student(name, firstName,birthday, this.nationality, university, graduationYear, email, remark)
-            System.out.println(person.toString())
+        } else {
+            val company = findViewById<EditText>(R.id.main_specific_compagny).text.toString()
+            val experience = findViewById<EditText>(R.id.main_specific_experience).text.toString().toInt()
+            person = Worker(name, firstName, birthday, nationality, company, sector, experience, email, remark)
         }
+        println(person)
     }
 
     /**
@@ -114,6 +117,24 @@ class MainActivity : AppCompatActivity() {
             ++i
         }
     }
+
+    /**
+     *
+     */
+    private fun manageCalendar() {
+        val constraintsBuilder = CalendarConstraints.Builder()
+        val datePicker: MaterialDatePicker<Long> = MaterialDatePicker()
+        constraintsBuilder.setEnd(MaterialDatePicker.thisMonthInUtcMilliseconds())
+        MaterialDatePicker.Builder.datePicker().setSelection(MaterialDatePicker.todayInUtcMilliseconds()).build()
+            .show(supportFragmentManager, "materialDatePicker")
+        datePicker.addOnPositiveButtonClickListener {
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val date = sdf.format(it)
+            println(date)
+        }
+
+    }
+
 
     /**
      * Managing specific data whether the user is a student or a worker
