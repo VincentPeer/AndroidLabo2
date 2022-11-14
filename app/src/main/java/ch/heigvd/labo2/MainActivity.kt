@@ -15,25 +15,33 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+/**
+ *
+ */
 class MainActivity : AppCompatActivity() {
+    private lateinit var customDatePickerBuilder: CustomDatePickerBuilder
     private lateinit var personType: String
     private lateinit var person: Person
     private var nationality = ""
     private var sector = ""
+    private lateinit var calendar: Calendar
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // Date selection
-        val date = findViewById<ImageButton>(R.id.cake_button)
-        date.setOnClickListener {
-            manageCalendar()
+        customDatePickerBuilder = CustomDatePickerBuilder(
+            MaterialDatePicker.Builder.datePicker(),
+            findViewById(R.id.main_base_birthdate))
+
+        findViewById<ImageButton>(R.id.cake_button).setOnClickListener {
+            customDatePickerBuilder.getPicker().show(supportFragmentManager, null)
         }
 
         // Nationality selection
-        val nationalitySpinner = findViewById<Spinner>(R.id.nationality_spinner)
-        nationalitySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        findViewById<Spinner>(R.id.nationality_spinner).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 if(pos == 0)
                     return
@@ -44,14 +52,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         // User type selection
-        val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
-        radioGroup.setOnCheckedChangeListener { _, choiceId ->
+        findViewById<RadioGroup>(R.id.radio_group).setOnCheckedChangeListener { _, choiceId ->
             manageUserType(choiceId)
         }
 
         // Worker sector selection
-        val sectorSpinner = findViewById<Spinner>(R.id.sector_spinner)
-        sectorSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        findViewById<Spinner>(R.id.sector_spinner).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 if(pos == 0)
                     return
@@ -63,14 +69,12 @@ class MainActivity : AppCompatActivity() {
 
         // Delete every field when cancel button is applied
         val btnCancel = findViewById<Button>(R.id.btn_cancel)
-        val parent = btnCancel.parent
         btnCancel.setOnClickListener {
-            clearForm(parent as ViewGroup)
+            clearForm(btnCancel.parent as ViewGroup)
         }
 
         // Create a new person from written data when ok button ok is applied
-        val btnOk = findViewById<Button>(R.id.btn_ok)
-        btnOk.setOnClickListener {
+        findViewById<Button>(R.id.btn_ok).setOnClickListener {
             addNewPerson()
         }
     }
@@ -80,23 +84,19 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun addNewPerson() {
-        val birthday =    Calendar.getInstance().apply {
-            set(Calendar.YEAR, 1998)
-            set(Calendar.MONTH, Calendar.APRIL)
-            set(Calendar.DAY_OF_MONTH, 8)
-        }
         val name: String = findViewById<EditText>(R.id.main_base_name).text.toString()
         val firstName: String = findViewById<EditText>(R.id.main_base_firstname).text.toString()
+        val birthday = customDatePickerBuilder.dateField.text.toString()
         val email: String = findViewById<EditText>(R.id.additional_mail).text.toString()
         val remark: String = findViewById<EditText>(R.id.additional_remarks).text.toString()
         if(personType == "student") {
             val university = findViewById<EditText>(R.id.main_specific_school).text.toString()
             val graduationYear = findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt()
-            person =  Student(name, firstName, birthday, this.nationality, university, graduationYear, email, remark)
+            person =  Student(name, firstName, customDatePickerBuilder.getCalendar(), this.nationality, university, graduationYear, email, remark)
         } else {
             val company = findViewById<EditText>(R.id.main_specific_compagny).text.toString()
             val experience = findViewById<EditText>(R.id.main_specific_experience).text.toString().toInt()
-            person = Worker(name, firstName, birthday, nationality, company, sector, experience, email, remark)
+            person = Worker(name, firstName, customDatePickerBuilder.getCalendar(), nationality, company, sector, experience, email, remark)
         }
         println(person)
     }
@@ -118,23 +118,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     *
-     */
-    private fun manageCalendar() {
-        val constraintsBuilder = CalendarConstraints.Builder()
-        val datePicker: MaterialDatePicker<Long> = MaterialDatePicker()
-        constraintsBuilder.setEnd(MaterialDatePicker.thisMonthInUtcMilliseconds())
-        MaterialDatePicker.Builder.datePicker().setSelection(MaterialDatePicker.todayInUtcMilliseconds()).build()
-            .show(supportFragmentManager, "materialDatePicker")
-        datePicker.addOnPositiveButtonClickListener {
-            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val date = sdf.format(it)
-            println(date)
-        }
-
-    }
-
 
     /**
      * Managing specific data whether the user is a student or a worker
@@ -152,5 +135,70 @@ class MainActivity : AppCompatActivity() {
             this.personType = "worker"
         }
     }
-}
 
+    private class CustomDatePickerBuilder(
+        val matDatePicker: MaterialDatePicker.Builder<Long>,
+        val dateField: EditText,
+        ) {
+        private val dateFormat: String = "dd MMMM yyyy"
+        private val maxAge = 80
+        private val minAge = 15
+        private val today = MaterialDatePicker.todayInUtcMilliseconds()
+
+        private var constraints = CalendarConstraints.Builder()
+
+        fun getCalendar(): Calendar {
+            val sdf = SimpleDateFormat(dateFormat, Locale.US)
+            if (!dateField.text.isEmpty()) {
+                sdf.parse(dateField.text.toString())
+            }
+            var calendar = Calendar.getInstance()
+            calendar.setTime(sdf.parse(dateField.text.toString()))
+            return calendar
+
+        }
+
+        fun getPicker(): MaterialDatePicker<Long> {
+
+            val openAt: Calendar
+            val sdf = SimpleDateFormat(dateFormat, Locale.US)
+            if (!dateField.text.isEmpty()) {
+                sdf.parse(dateField.text.toString())
+                openAt = sdf.calendar
+            } else {
+                openAt = endDate()
+            }
+
+            constraints
+                .setOpenAt(openAt.timeInMillis)
+                .setStart(startDate().timeInMillis)
+                .setEnd(endDate().timeInMillis)
+
+            val picker = matDatePicker
+                .setCalendarConstraints(constraints.build())
+                .build()
+
+            picker.addOnPositiveButtonClickListener {
+                val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
+                val date = parser.format(it)
+                dateField.setText(date.toString())
+            }
+
+            return picker
+        }
+
+        private fun startDate(): Calendar {
+            val out = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+            out.timeInMillis = today
+            out[Calendar.YEAR] = out[Calendar.YEAR] - maxAge
+            return out
+        }
+
+        private fun endDate(): Calendar {
+            val out = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+            out.timeInMillis = today
+            out[Calendar.YEAR] = out[Calendar.YEAR] - minAge
+            return out
+        }
+    }
+}
