@@ -80,19 +80,19 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun addNewPerson() {
+        val birthday =    Calendar.getInstance().apply {
+            set(Calendar.YEAR, 1998)
+            set(Calendar.MONTH, Calendar.APRIL)
+            set(Calendar.DAY_OF_MONTH, 8)
+        }
         val name: String = findViewById<EditText>(R.id.main_base_name).text.toString()
         val firstName: String = findViewById<EditText>(R.id.main_base_firstname).text.toString()
-        //val birthday: Calendar = findViewById<EditText>(R.id.main_base_firstname).text.toString()
-        val birthday: Calendar = Calendar.getInstance().apply {
-            set(Calendar.YEAR, 1996)
-            set(Calendar.MONTH, Calendar.JUNE)
-            set(Calendar.DAY_OF_MONTH, 12) }
         val email: String = findViewById<EditText>(R.id.additional_mail).text.toString()
         val remark: String = findViewById<EditText>(R.id.additional_remarks).text.toString()
         if(personType == "student") {
             val university = findViewById<EditText>(R.id.main_specific_school).text.toString()
             val graduationYear = findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt()
-            person =  Student(name, firstName,birthday, this.nationality, university, graduationYear, email, remark)
+            person =  Student(name, firstName, birthday, this.nationality, university, graduationYear, email, remark)
         } else {
             val company = findViewById<EditText>(R.id.main_specific_compagny).text.toString()
             val experience = findViewById<EditText>(R.id.main_specific_experience).text.toString().toInt()
