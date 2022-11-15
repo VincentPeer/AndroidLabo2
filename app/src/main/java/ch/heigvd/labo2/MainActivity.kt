@@ -29,7 +29,6 @@ import java.util.*
  */
 class MainActivity : AppCompatActivity() {
     private lateinit var customDatePickerBuilder: CustomDatePickerBuilder
-    private lateinit var personType: String
     private lateinit var person: Person
     private var nationality = ""
     private var sector = ""
@@ -87,7 +86,7 @@ class MainActivity : AppCompatActivity() {
             addNewPerson()
         }
 
-        // readFromExistingUser(exampleStudent)
+        readFromExistingUser(exampleStudent)
 
     }
 
@@ -100,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         val firstName: String = findViewById<EditText>(R.id.main_base_firstname).text.toString()
         val email: String = findViewById<EditText>(R.id.additional_mail).text.toString()
         val remark: String = findViewById<EditText>(R.id.additional_remarks).text.toString()
-        if(personType == "student") {
+        if(getUserType(person) == Student::class.java) {
             val university = findViewById<EditText>(R.id.main_specific_school).text.toString()
             val graduationYear = findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt()
             person =  Student(name, firstName, customDatePickerBuilder.getCalendar(), this.nationality, university, graduationYear, email, remark)
@@ -124,6 +123,8 @@ class MainActivity : AppCompatActivity() {
                 view.setText("")
             } else if(view is Spinner) {
                 view.setSelection(0) // Reset to "selection" state
+            } else if(view is RadioGroup) {
+                view.clearCheck() // Reset radioGroup with no state chosen
             }
             ++i
         }
@@ -139,11 +140,12 @@ class MainActivity : AppCompatActivity() {
         if(choiceId == R.id.student_choice) {
             studentGroup.visibility = View.VISIBLE
             workerGroup.visibility = View.GONE
-            this.personType = "student"
-        } else {
+        } else if(choiceId == R.id.worker_choice){
             workerGroup.visibility = View.VISIBLE
             studentGroup.visibility = View.GONE
-            this.personType = "worker"
+        } else {
+            studentGroup.visibility = View.GONE
+            workerGroup.visibility = View.GONE
         }
     }
 
@@ -222,6 +224,26 @@ class MainActivity : AppCompatActivity() {
     private fun readFromExistingUser(person: Person) {
         findViewById<EditText>(R.id.main_base_name).setText(person.name)
         findViewById<EditText>(R.id.main_base_firstname).setText(person.firstName)
-        findViewById<EditText>(R.id.main_base_birthdate).setText(person.birthDay.toString())
+
+        // Get birthday
+        val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.US)
+        findViewById<EditText>(R.id.main_base_birthdate).setText(sdf.format(person.birthDay.time))
+
+        // Get user type
+        val radioGroupPosition = 0
+        if(getUserType(person) == Worker::class.java) {
+            val pos = 1
+        }
+        //findViewById<RadioGroup>(R.id.radio_group).setTransitionVisibility(radioGroupPosition)
+    }
+
+    private fun getUserType(person: Person) : Class<*> {
+        if(person is Student) {
+            return Student::class.java
+        } else if(person is Worker) {
+            return Worker::class.java
+        } else { // todo exception ou rien faire?
+            throw java.lang.RuntimeException("Invalid user type")
+        }
     }
 }
