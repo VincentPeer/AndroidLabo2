@@ -9,7 +9,6 @@
 package ch.heigvd.labo2
 
 import android.os.Bundle
-import android.provider.MediaStore.Audio.Radio
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import ch.heigvd.labo2.Model.Person
-import ch.heigvd.labo2.Model.Person.Companion.exampleStudent
 import ch.heigvd.labo2.Model.Person.Companion.exampleWorker
 import ch.heigvd.labo2.Model.Student
 import ch.heigvd.labo2.Model.Worker
@@ -35,7 +33,6 @@ const val LOG_TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
     private lateinit var customDatePickerBuilder: CustomDatePickerBuilder
     private lateinit var person: Person
-    private var sector = ""
 
     private var personType: PersonType = PersonType.NONE
 
@@ -110,7 +107,7 @@ class MainActivity : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 if(pos == 0)
                     return
-                sector = parent.getItemAtPosition(pos).toString()
+                sectorSelected = parent.getItemAtPosition(pos).toString()
             }
             override fun onNothingSelected(parent: AdapterView<*>) {
             }
@@ -156,8 +153,6 @@ class MainActivity : AppCompatActivity() {
                 mailAddressField.text.toString(),
                 remark.text.toString())
         } else if (personType == PersonType.WORKER) {
-            val company = findViewById<EditText>(R.id.main_specific_compagny).text.toString()
-            val experience = findViewById<EditText>(R.id.main_specific_experience).text.toString().toInt()
             person = Worker(nameField.text.toString(),
                 firstnameField.text.toString(),
                 customDatePickerBuilder.getCalendar(),
@@ -168,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                 mailAddressField.text.toString(),
                 remark.text.toString())
         } else {
-            throw Exception("Bad person type ... cannot create a Person objetc.")
+            throw Exception("Bad person type ... cannot create a Person object.")
         }
         println(person)
         Log.d(LOG_TAG, person.toString())
@@ -252,15 +247,15 @@ class MainActivity : AppCompatActivity() {
 
         private var constraints = CalendarConstraints.Builder()
 
+        // TODO comment faire ça proprement ???
         fun getCalendar(): Calendar {
             val sdf = SimpleDateFormat(DATE_FORMAT, Locale.US)
             if (!birthdateField.text.isEmpty()) {
                 sdf.parse(birthdateField.text.toString())
+                return sdf.calendar
+            } else {
+                return Calendar.getInstance()
             }
-            var calendar = Calendar.getInstance()
-            calendar.setTime(sdf.parse(birthdateField.text.toString()))
-            return calendar
-
         }
 
         fun getPicker(): MaterialDatePicker<Long> {
@@ -284,7 +279,7 @@ class MainActivity : AppCompatActivity() {
                 .build()
 
             picker.addOnPositiveButtonClickListener {
-                val parser = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
+                val parser = SimpleDateFormat(DATE_FORMAT, Locale.US)
                 val date = parser.format(it)
                 birthdateField.setText(date.toString())
             }
@@ -360,6 +355,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // TODO à quoi ça sert ???
     private fun findPositionInSpinner(string: String) : Int {
         val a = arrayOf(R.array.nationalities)
         findViewById<Spinner>(R.id.nationality_spinner).setSelection(a[0])
