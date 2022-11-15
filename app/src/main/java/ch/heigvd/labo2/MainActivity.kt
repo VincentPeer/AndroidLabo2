@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Test with existing user
-        readFromExistingUser(exampleStudent)
+        //readFromExistingUser(exampleStudent)
         //readFromExistingUser(exampleWorker)
     }
 
