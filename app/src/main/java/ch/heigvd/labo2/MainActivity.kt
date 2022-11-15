@@ -8,6 +8,7 @@
 
 package ch.heigvd.labo2
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.provider.MediaStore.Audio.Radio
 import android.view.View
@@ -89,9 +90,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Test with existing user
-        //readFromExistingUser(exampleStudent)
-        readFromExistingUser(exampleWorker)
-
+        readFromExistingUser(exampleStudent)
+        //readFromExistingUser(exampleWorker)
     }
 
 
@@ -233,13 +233,12 @@ class MainActivity : AppCompatActivity() {
         findViewById<EditText>(R.id.main_base_firstname).setText(person.firstName)
         findViewById<EditText>(R.id.additional_mail).setText(person.email)
         findViewById<EditText>(R.id.additional_remarks).setText(person.remark)
-        findViewById<Spinner>(R.id.nationality_spinner).setSelection(findPositionInSpinner(person.nationality))
+        findViewById<Spinner>(R.id.nationality_spinner)
+            .setSelection(findPositionInSpinner(R.array.nationalities,person.nationality))
 
         // Set birthday
         val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.US)
         findViewById<EditText>(R.id.main_base_birthdate).setText(sdf.format(person.birthDay.time))
-
-        // Set nationality
 
         // Set specific data
         val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
@@ -253,6 +252,8 @@ class MainActivity : AppCompatActivity() {
             radioGroup.check(R.id.worker_choice)
             findViewById<EditText>(R.id.main_specific_compagny).setText(person.company)
             findViewById<EditText>(R.id.main_specific_experience).setText(person.experienceYear.toString())
+            findViewById<Spinner>(R.id.sector_spinner)
+                .setSelection(findPositionInSpinner(R.array.sectors, person.sector))
         }
     }
 
@@ -269,9 +270,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun findPositionInSpinner(string: String) : Int {
-        val a = arrayOf(R.array.nationalities)
-        findViewById<Spinner>(R.id.nationality_spinner).setSelection(a[0])
-        return  0
+    /**
+     * Return the index of a string in an array
+     */
+    private fun findPositionInSpinner(arrayId: Int, string: String) : Int {
+        val res: Resources = resources
+        val array = res.getStringArray(arrayId)
+        return array.indexOf(string)
     }
 }
