@@ -10,6 +10,7 @@ package ch.heigvd.labo2
 
 import android.os.Bundle
 import android.provider.MediaStore.Audio.Radio
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -26,6 +27,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 const val DATE_FORMAT = "dd MMMM yyyy"
+const val LOG_TAG = "MainActivity"
 
 /**
  * Creates the form that need to be complete by a user, or print information from an existed user.
@@ -33,29 +35,65 @@ const val DATE_FORMAT = "dd MMMM yyyy"
 class MainActivity : AppCompatActivity() {
     private lateinit var customDatePickerBuilder: CustomDatePickerBuilder
     private lateinit var person: Person
-    private var nationality = ""
     private var sector = ""
 
+    private var personType: PersonType = PersonType.NONE
+
+    // General fields
+    private lateinit var nameField: EditText
+    private lateinit var firstnameField: EditText
+    private lateinit var birthdateField: EditText
+    private lateinit var nationalityField: Spinner
+    private var nationalitySelectedVal: String = ""
+    private lateinit var remark: EditText
+    private lateinit var mailAddressField: EditText
+
+    // Student fields
+    private lateinit var schoolField: EditText
+    private lateinit var gradYearField: EditText
+    private lateinit var sectorField: Spinner
+    private var sectorSelected = ""
+    private lateinit var experienceYearField: EditText
+
+    // Worker Fields
+    private lateinit var companyField: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // General fields initialisation
+        nameField = findViewById(R.id.main_base_name)
+        firstnameField = findViewById(R.id.main_base_firstname)
+        birthdateField = findViewById(R.id.main_base_birthdate)
+        remark = findViewById(R.id.additional_remarks)
+        mailAddressField = findViewById(R.id.additional_mail)
+        nationalityField = findViewById(R.id.nationality_spinner)
+
+        // Student fields initialisation
+        schoolField = findViewById(R.id.main_specific_school)
+        gradYearField = findViewById(R.id.main_specific_graduationyear)
+
+        // Worker fields initialisation
+        companyField = findViewById(R.id.main_specific_compagny)
+        sectorField = findViewById(R.id.sector_spinner)
+        experienceYearField = findViewById(R.id.main_specific_experience)
+
+
         // Date selection
         customDatePickerBuilder = CustomDatePickerBuilder(
-            MaterialDatePicker.Builder.datePicker(),
-            findViewById(R.id.main_base_birthdate))
+            MaterialDatePicker.Builder.datePicker())
 
         findViewById<ImageButton>(R.id.cake_button).setOnClickListener {
             customDatePickerBuilder.getPicker().show(supportFragmentManager, null)
         }
 
         // Nationality selection
-        findViewById<Spinner>(R.id.nationality_spinner).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        nationalityField.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 if(pos == 0)
                     return
-                nationality = parent.getItemAtPosition(pos).toString()
+                nationalitySelectedVal = parent.getItemAtPosition(pos).toString()
             }
             // Does nothing if no selection was done, but the function is required
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -68,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Worker sector selection
-        findViewById<Spinner>(R.id.sector_spinner).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        sectorField.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 if(pos == 0)
                     return
@@ -86,7 +124,15 @@ class MainActivity : AppCompatActivity() {
 
         // Create a new person from written data when ok button ok is applied
         findViewById<Button>(R.id.btn_ok).setOnClickListener {
-            addNewPerson()
+            if (noEmptyField()) {
+                try {
+                    addNewPerson()
+                } catch (e: Exception) {
+                    Log.e(LOG_TAG, e.toString())
+                }
+            } else {
+                Log.e(LOG_TAG, "Empty field(s)...")
+            }
         }
 
         // Test with existing user
@@ -100,20 +146,58 @@ class MainActivity : AppCompatActivity() {
      * Get data form the form to create a new Person
      */
     private fun addNewPerson() {
-        val name: String = findViewById<EditText>(R.id.main_base_name).text.toString()
-        val firstName: String = findViewById<EditText>(R.id.main_base_firstname).text.toString()
-        val email: String = findViewById<EditText>(R.id.additional_mail).text.toString()
-        val remark: String = findViewById<EditText>(R.id.additional_remarks).text.toString()
-        if(getUserType(person) == Student::class.java) {
-            val university = findViewById<EditText>(R.id.main_specific_school).text.toString()
-            val graduationYear = findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt()
-            person =  Student(name, firstName, customDatePickerBuilder.getCalendar(), this.nationality, university, graduationYear, email, remark)
-        } else {
+        if(personType == PersonType.STUDENT) {
+            person =  Student(
+                nameField.text.toString(),
+                firstnameField.text.toString(),
+                customDatePickerBuilder.getCalendar(),
+                nationalitySelectedVal, schoolField.text.toString(),
+                gradYearField.text.toString().toInt(),
+                mailAddressField.text.toString(),
+                remark.text.toString())
+        } else if (personType == PersonType.WORKER) {
             val company = findViewById<EditText>(R.id.main_specific_compagny).text.toString()
             val experience = findViewById<EditText>(R.id.main_specific_experience).text.toString().toInt()
-            person = Worker(name, firstName, customDatePickerBuilder.getCalendar(), nationality, company, sector, experience, email, remark)
+            person = Worker(nameField.text.toString(),
+                firstnameField.text.toString(),
+                customDatePickerBuilder.getCalendar(),
+                nationalitySelectedVal,
+                companyField.text.toString(),
+                sectorSelected,
+                experienceYearField.text.toString().toInt(),
+                mailAddressField.text.toString(),
+                remark.text.toString())
+        } else {
+            throw Exception("Bad person type ... cannot create a Person objetc.")
         }
         println(person)
+        Log.d(LOG_TAG, person.toString())
+    }
+
+    private fun noEmptyField(): Boolean {
+        if (
+            nameField.text.isEmpty() ||
+                    firstnameField.text.isEmpty() ||
+                    nationalitySelectedVal.isEmpty() ||
+                    mailAddressField.text.isEmpty()
+        ) {
+            return false
+        }
+
+        if (personType == PersonType.WORKER) {
+            if (companyField.text.isEmpty() ||
+                    sectorSelected.isEmpty() ||
+                    experienceYearField.text.isEmpty()) {
+                return false
+            }
+        }
+        if (personType == PersonType.STUDENT) {
+            if (schoolField.text.isEmpty() ||
+                    gradYearField.text.isEmpty()) {
+                return false
+            }
+        }
+        return true
     }
 
     /**
@@ -145,177 +229,22 @@ class MainActivity : AppCompatActivity() {
         if(choiceId == R.id.student_choice) {
             studentGroup.visibility = View.VISIBLE
             workerGroup.visibility = View.GONE
+            personType = PersonType.STUDENT
         } else if(choiceId == R.id.worker_choice){
             workerGroup.visibility = View.VISIBLE
             studentGroup.visibility = View.GONE
+            personType = PersonType.WORKER
         } else {
             studentGroup.visibility = View.GONE
             workerGroup.visibility = View.GONE
+            personType = PersonType.NONE
         }
     }
 
-    private enum class PersonType {
-        WORKER,
-        STUDENT,
-        NONE
-    }
-
-    private class CustomForm(val activity: MainActivity) {
-
-        var personType: PersonType = PersonType.NONE
-        val nationalityField = activity.findViewById<Spinner>(R.id.nationality_spinner)
-        var selectedNationality = ""
-        val studentGroup = activity.findViewById<Group>(R.id.student_group)
-        val workerGroup = activity.findViewById<Group>(R.id.worker_group)
-        val persTypeSelector = activity.findViewById<RadioGroup>(R.id.radio_group)
-
-        // General fields
-        val name = activity.findViewById<EditText>(R.id.main_base_name)
-        val firstname = activity.findViewById<EditText>(R.id.main_base_firstname)
-        val birthdate = activity.findViewById<EditText>(R.id.main_base_birthdate)
-        val mail = activity.findViewById<EditText>(R.id.additional_mail)
-        val remark = activity.findViewById<EditText>(R.id.additional_remarks)
-
-        // Student Specific fields
-        val school = activity.findViewById<EditText>(R.id.main_specific_school)
-        val graduationyear = activity.findViewById<EditText>(R.id.main_specific_graduationyear)
-
-        // Worker Specific fields
-        val workerSector = activity.findViewById<Spinner>(R.id.sector_spinner)
-        var workerSectorSelected = ""
-        val workerCompany = activity.findViewById<EditText>(R.id.main_specific_compagny)
-        val workerExperience = activity.findViewById<EditText>(R.id.main_specific_experience)
-
-        init {
-
-            persTypeSelector.setOnCheckedChangeListener { _, choiceId ->
-                manageUserType(choiceId)
-            }
-
-            nationalityField.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-                    if(pos == 0)
-                        return
-                    selectedNationality = parent.getItemAtPosition(pos).toString()
-                }
-                // Does nothing if no selection was done, but the function is required
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                }
-            }
-
-            workerSector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-                    if(pos == 0)
-                        return
-                    workerSectorSelected = parent.getItemAtPosition(pos).toString()
-                }
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                }
-            }
-        }
 
 
-
-        fun createPerson(): Person {
-            if (!noEmptyFields()) {
-                throw Exception("Empty fileds !")
-            }
-
-            if(personType == PersonType.STUDENT) {
-
-                return Student(
-                    name.text.toString(),
-                    firstname.text.toString(),
-                    getBirthdateCalendar(),
-                    selectedNationality,
-                    school.text.toString(),
-                    graduationyear.text.toString().toInt(),
-                    mail.text.toString(),
-                    remark.text.toString())
-            }
-            else if (personType == PersonType.WORKER){
-                return Worker(
-                    name.text.toString(),
-                    firstname.text.toString(),
-                    getBirthdateCalendar(),
-                    selectedNationality,
-                    workerCompany.text.toString(),
-                    workerSectorSelected,
-                    workerExperience.text.toString().toInt(),
-                    mail.text.toString(),
-                    remark.text.toString()
-                )
-            } else {
-                throw Exception("Unvalid peson type.")
-            }
-
-        }
-
-
-        fun getBirthdateCalendar(): Calendar {
-            val sdf = SimpleDateFormat(DATE_FORMAT, Locale.US)
-
-            if (!birthdate.text.isEmpty()) {
-                sdf.parse(birthdate.text.toString())
-            }
-            val calendar = Calendar.getInstance()
-            sdf.parse(birthdate.text.toString())?.let { calendar.setTime(it) }
-            return calendar
-
-        }
-
-        private fun noEmptyFields(): Boolean {
-
-            if (
-            name.text.isEmpty() ||
-            firstname.text.isEmpty() ||
-            birthdate.text.isEmpty() ||
-            mail.text.isEmpty() ||
-            remark.text.isEmpty()
-            ) {
-                return false
-            }
-
-            if (personType == PersonType.WORKER) {
-                if (
-                    workerSectorSelected.isEmpty() ||
-                    workerCompany.text.isEmpty() ||
-                    workerExperience.text.isEmpty()
-                ) {
-                    return false
-                }
-            }
-
-            if (personType == PersonType.STUDENT) {
-                if (
-                    graduationyear.text.isEmpty() ||
-                            school.text.isEmpty()
-                ) {
-                    return false
-                }
-            }
-            return true
-        }
-
-        /**
-         * Managing specific data whether the user is a student or a worker
-         */
-        private fun manageUserType(choiceId: Int) {
-            if(choiceId == R.id.student_choice) {
-                studentGroup.visibility = View.VISIBLE
-                workerGroup.visibility = View.GONE
-                personType = PersonType.STUDENT
-            } else {
-                workerGroup.visibility = View.VISIBLE
-                studentGroup.visibility = View.GONE
-                personType = PersonType.WORKER
-            }
-        }
-    }
-
-    private class CustomDatePickerBuilder(
-        val matDatePicker: MaterialDatePicker.Builder<Long>,
-        val dateField: EditText,
+    private inner class CustomDatePickerBuilder(
+        val matDatePicker: MaterialDatePicker.Builder<Long>
         ) {
         private val maxAge = 80
         private val minAge = 15
@@ -325,11 +254,11 @@ class MainActivity : AppCompatActivity() {
 
         fun getCalendar(): Calendar {
             val sdf = SimpleDateFormat(DATE_FORMAT, Locale.US)
-            if (!dateField.text.isEmpty()) {
-                sdf.parse(dateField.text.toString())
+            if (!birthdateField.text.isEmpty()) {
+                sdf.parse(birthdateField.text.toString())
             }
             var calendar = Calendar.getInstance()
-            calendar.setTime(sdf.parse(dateField.text.toString()))
+            calendar.setTime(sdf.parse(birthdateField.text.toString()))
             return calendar
 
         }
@@ -338,8 +267,8 @@ class MainActivity : AppCompatActivity() {
 
             val openAt: Calendar
             val sdf = SimpleDateFormat(DATE_FORMAT, Locale.US)
-            if (!dateField.text.isEmpty()) {
-                sdf.parse(dateField.text.toString())
+            if (!birthdateField.text.isEmpty()) {
+                sdf.parse(birthdateField.text.toString())
                 openAt = sdf.calendar
             } else {
                 openAt = endDate()
@@ -357,7 +286,7 @@ class MainActivity : AppCompatActivity() {
             picker.addOnPositiveButtonClickListener {
                 val parser = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
                 val date = parser.format(it)
-                dateField.setText(date.toString())
+                birthdateField.setText(date.toString())
             }
 
             return picker
@@ -376,6 +305,12 @@ class MainActivity : AppCompatActivity() {
             out[Calendar.YEAR] = out[Calendar.YEAR] - minAge
             return out
         }
+    }
+
+    private enum class PersonType {
+        STUDENT,
+        WORKER,
+        NONE
     }
 
     /**
