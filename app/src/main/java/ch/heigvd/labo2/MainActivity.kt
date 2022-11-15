@@ -1,3 +1,11 @@
+/**
+ *  * DAA Laboratory 2
+ * @author      : Damien Maier, Jean-François Pasche, Vincent Peer
+ * Date         : 16.11.2022
+ * Description  : Offers a form interface with multiple fields about user information. The user can
+ *                be a student or a worker and has multiple field to edit concerning his personal data.
+ */
+
 package ch.heigvd.labo2
 
 import android.os.Bundle
@@ -7,6 +15,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import ch.heigvd.labo2.Model.Person
+import ch.heigvd.labo2.Model.Person.Companion.exampleStudent
 import ch.heigvd.labo2.Model.Student
 import ch.heigvd.labo2.Model.Worker
 import com.google.android.material.datepicker.CalendarConstraints
@@ -16,7 +25,7 @@ import java.util.*
 
 
 /**
- *
+ * Creates the form that need to be complete by a user, or print information from an existed user.
  */
 class MainActivity : AppCompatActivity() {
     private lateinit var customDatePickerBuilder: CustomDatePickerBuilder
@@ -24,7 +33,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var person: Person
     private var nationality = ""
     private var sector = ""
-    private lateinit var calendar: Calendar
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +55,7 @@ class MainActivity : AppCompatActivity() {
                     return
                 nationality = parent.getItemAtPosition(pos).toString()
             }
+            // Does nothing if no selection was done, but the function is required
             override fun onNothingSelected(parent: AdapterView<*>) {
             }
         }
@@ -77,16 +86,18 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btn_ok).setOnClickListener {
             addNewPerson()
         }
+
+        // readFromExistingUser(exampleStudent)
+
     }
 
 
     /**
-     *
+     * Get data form the form to create a new Person
      */
     private fun addNewPerson() {
         val name: String = findViewById<EditText>(R.id.main_base_name).text.toString()
         val firstName: String = findViewById<EditText>(R.id.main_base_firstname).text.toString()
-        val birthday = customDatePickerBuilder.dateField.text.toString()
         val email: String = findViewById<EditText>(R.id.additional_mail).text.toString()
         val remark: String = findViewById<EditText>(R.id.additional_remarks).text.toString()
         if(personType == "student") {
@@ -102,7 +113,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     *
+     * Clears every flied of editText and put spinners to the default value
      */
     private fun clearForm(group: ViewGroup) {
         var i = 0
@@ -136,6 +147,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     *
+     */
     private class CustomDatePickerBuilder(
         val matDatePicker: MaterialDatePicker.Builder<Long>,
         val dateField: EditText,
@@ -200,5 +214,14 @@ class MainActivity : AppCompatActivity() {
             out[Calendar.YEAR] = out[Calendar.YEAR] - minAge
             return out
         }
+    }
+
+    /**
+     *
+     */
+    private fun readFromExistingUser(person: Person) {
+        findViewById<EditText>(R.id.main_base_name).setText(person.name)
+        findViewById<EditText>(R.id.main_base_firstname).setText(person.firstName)
+        findViewById<EditText>(R.id.main_base_birthdate).setText(person.birthDay.toString())
     }
 }
