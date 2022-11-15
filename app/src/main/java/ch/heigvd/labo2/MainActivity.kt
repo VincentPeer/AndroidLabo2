@@ -9,6 +9,7 @@
 package ch.heigvd.labo2
 
 import android.os.Bundle
+import android.provider.MediaStore.Audio.Radio
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import ch.heigvd.labo2.Model.Person
 import ch.heigvd.labo2.Model.Person.Companion.exampleStudent
+import ch.heigvd.labo2.Model.Person.Companion.exampleWorker
 import ch.heigvd.labo2.Model.Student
 import ch.heigvd.labo2.Model.Worker
 import com.google.android.material.datepicker.CalendarConstraints
@@ -86,7 +88,9 @@ class MainActivity : AppCompatActivity() {
             addNewPerson()
         }
 
-        readFromExistingUser(exampleStudent)
+        // Test with existing user
+        //readFromExistingUser(exampleStudent)
+        readFromExistingUser(exampleWorker)
 
     }
 
@@ -219,31 +223,55 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     *
+     * Read data from an existing user and fill the form with the corresponding value
      */
     private fun readFromExistingUser(person: Person) {
+        this.person = person
+
+        // Set main data
         findViewById<EditText>(R.id.main_base_name).setText(person.name)
         findViewById<EditText>(R.id.main_base_firstname).setText(person.firstName)
+        findViewById<EditText>(R.id.additional_mail).setText(person.email)
+        findViewById<EditText>(R.id.additional_remarks).setText(person.remark)
+        findViewById<Spinner>(R.id.nationality_spinner).setSelection(findPositionInSpinner(person.nationality))
 
-        // Get birthday
+        // Set birthday
         val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.US)
         findViewById<EditText>(R.id.main_base_birthdate).setText(sdf.format(person.birthDay.time))
 
-        // Get user type
-        val radioGroupPosition = 0
-        if(getUserType(person) == Worker::class.java) {
-            val pos = 1
+        // Set nationality
+
+        // Set specific data
+        val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
+        if(getUserType(person) == Student::class.java) {
+            person as Student
+            radioGroup.check(R.id.student_choice)
+            findViewById<EditText>(R.id.main_specific_school).setText(person.university)
+            findViewById<EditText>(R.id.main_specific_graduationyear).setText(person.graduationYear.toString())
+        } else {
+            person as Worker
+            radioGroup.check(R.id.worker_choice)
+            findViewById<EditText>(R.id.main_specific_compagny).setText(person.company)
+            findViewById<EditText>(R.id.main_specific_experience).setText(person.experienceYear.toString())
         }
-        //findViewById<RadioGroup>(R.id.radio_group).setTransitionVisibility(radioGroupPosition)
     }
 
+    /**
+     * Return the class type of the user
+     */
     private fun getUserType(person: Person) : Class<*> {
-        if(person is Student) {
-            return Student::class.java
+        return if(person is Student) {
+            Student::class.java
         } else if(person is Worker) {
-            return Worker::class.java
+            Worker::class.java
         } else { // todo exception ou rien faire?
             throw java.lang.RuntimeException("Invalid user type")
         }
+    }
+
+    private fun findPositionInSpinner(string: String) : Int {
+        val a = arrayOf(R.array.nationalities)
+        findViewById<Spinner>(R.id.nationality_spinner).setSelection(a[0])
+        return  0
     }
 }
