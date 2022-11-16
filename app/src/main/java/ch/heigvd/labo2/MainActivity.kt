@@ -15,6 +15,8 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
+import androidx.core.view.children
+import androidx.core.view.iterator
 import ch.heigvd.labo2.Model.Person
 import ch.heigvd.labo2.Model.Person.Companion.exampleWorker
 import ch.heigvd.labo2.Model.Student
@@ -39,8 +41,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
         // Date selection
 
         datePicker = MaterialDatePicker.Builder.datePicker()
@@ -56,7 +56,6 @@ class MainActivity : AppCompatActivity() {
             updateBirthdateTextField()
         }
 
-
         findViewById<ImageButton>(R.id.cake_button).setOnClickListener {
             datePicker.show(supportFragmentManager, null)
         }
@@ -64,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         // Delete every field when cancel button is applied
         val btnCancel = findViewById<Button>(R.id.btn_cancel)
         btnCancel.setOnClickListener {
-            clearForm(btnCancel.parent as ViewGroup)
+            clearForm()
         }
 
         // Create a new person from written data when ok button ok is applied
@@ -161,19 +160,12 @@ class MainActivity : AppCompatActivity() {
     /**
      * Clears every flied of editText and put spinners to the default value
      */
-    private fun clearForm(group: ViewGroup) {
-        var i = 0
-        val count = group.childCount
-        while (i < count) {
-            val view = group.getChildAt(i)
-            if (view is EditText) {
-                view.setText("")
-            } else if(view is Spinner) {
-                view.setSelection(0) // Reset to "selection" state
-            } else if(view is RadioGroup) {
-                view.clearCheck() // Reset radioGroup with no state chosen
-            }
-            ++i
+    private fun clearForm() {
+        for (view in findViewById<ViewGroup>(R.id.main_layout))
+            when (view) {
+                is EditText -> view.setText("")
+                is Spinner -> view.setSelection(0) // Reset to "selection" state
+                is RadioGroup -> view.clearCheck() // Reset radioGroup with no state chosen
         }
     }
 
