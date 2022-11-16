@@ -191,6 +191,7 @@
         app:layout_constraintStart_toEndOf="@id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/additional_email_title"
+        android:nextFocusForward="@id/btn_ok"
         />
 
     <TextView

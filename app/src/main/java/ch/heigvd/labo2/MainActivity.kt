@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.iterator
 import ch.heigvd.labo2.Model.Person
+import ch.heigvd.labo2.Model.Person.Companion.exampleStudent
+import ch.heigvd.labo2.Model.Person.Companion.exampleWorker
 import ch.heigvd.labo2.Model.Student
 import ch.heigvd.labo2.Model.Worker
 import com.google.android.material.datepicker.CalendarConstraints
@@ -34,9 +36,7 @@ private const val BIRTHDAY_KEY = "birthday"
  * Creates the form that needs to be completed by a user, or print information from an existed user.
  */
 class MainActivity : AppCompatActivity() {
-
     private var birthdateTimeStamp : Long? = null
-
     private lateinit var person: Person
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
             val constraints = CalendarConstraints.Builder()
                 .setStart(Calendar.getInstance().apply { add(Calendar.YEAR, -100) }.timeInMillis)
-                .setEnd(Calendar.getInstance().apply { add(Calendar.YEAR, -10) }.timeInMillis)
+                .setEnd(Calendar.getInstance().timeInMillis)
                 .build()
 
             MaterialDatePicker.Builder.datePicker()
@@ -161,7 +161,6 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(LOG_TAG, person.toString())
     }
-
 
 
     private fun noEmptyField(): Boolean {
