@@ -49,14 +49,13 @@ class MainActivity : AppCompatActivity() {
 
         // Date selection
 
-        val datePickerConstraints =
-            CalendarConstraints.Builder()
-                .setStart(Calendar.getInstance().apply { add(Calendar.YEAR, -100) }.timeInMillis)
-                .setEnd(Calendar.getInstance().apply { add(Calendar.YEAR, -10) }.timeInMillis)
-                .build()
-
         datePicker = MaterialDatePicker.Builder.datePicker()
-            .setCalendarConstraints(datePickerConstraints)
+            .setCalendarConstraints(
+                CalendarConstraints.Builder()
+                    .setStart(Calendar.getInstance().apply { add(Calendar.YEAR, -100) }.timeInMillis)
+                    .setEnd(Calendar.getInstance().apply { add(Calendar.YEAR, -10) }.timeInMillis)
+                    .build()
+            )
             .build()
 
         datePicker.addOnPositiveButtonClickListener {
