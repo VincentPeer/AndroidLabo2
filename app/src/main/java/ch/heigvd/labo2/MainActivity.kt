@@ -35,9 +35,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var person: Person
 
-    private var personType: PersonType = PersonType.NONE
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -62,11 +59,6 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.cake_button).setOnClickListener {
             datePicker.show(supportFragmentManager, null)
-        }
-
-        // User type selection
-        findViewById<RadioGroup>(R.id.radio_group).setOnCheckedChangeListener { _, choiceId ->
-            manageUserType(choiceId)
         }
 
         // Delete every field when cancel button is applied
@@ -103,11 +95,18 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private fun getPersonType() =
+        when(findViewById<RadioGroup>(R.id.radio_group).checkedRadioButtonId) {
+            R.id.student_choice -> PersonType.STUDENT
+            R.id.worker_choice -> PersonType.WORKER
+            else -> null
+        }
+
     /**
      * Get data form the form to create a new Person
      */
     private fun addNewPerson() {
-        if(personType == PersonType.STUDENT) {
+        if(getPersonType() == PersonType.STUDENT) {
             person =  Student(
                 findViewById<EditText>(R.id.main_base_name).text.toString(),
                 findViewById<EditText>(R.id.main_base_firstname).text.toString(),
@@ -117,7 +116,7 @@ class MainActivity : AppCompatActivity() {
                 findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt(),
                 findViewById<EditText>(R.id.additional_mail).text.toString(),
                 findViewById<EditText>(R.id.additional_remarks).text.toString())
-        } else if (personType == PersonType.WORKER) {
+        } else if (getPersonType() == PersonType.WORKER) {
             person = Worker(
                 findViewById<EditText>(R.id.main_base_name).text.toString(),
                 findViewById<EditText>(R.id.main_base_firstname).text.toString(),
@@ -144,13 +143,13 @@ class MainActivity : AppCompatActivity() {
             return false
         }
 
-        if (personType == PersonType.WORKER) {
+        if (getPersonType() == PersonType.WORKER) {
             if (findViewById<EditText>(R.id.main_specific_compagny).text.isEmpty() ||
                 findViewById<EditText>(R.id.main_specific_experience).text.isEmpty()) {
                 return false
             }
         }
-        if (personType == PersonType.STUDENT) {
+        if (getPersonType() == PersonType.STUDENT) {
             if (findViewById<EditText>(R.id.main_specific_school).text.isEmpty() ||
                 findViewById<EditText>(R.id.main_specific_graduationyear).text.isEmpty()) {
                 return false
@@ -177,31 +176,6 @@ class MainActivity : AppCompatActivity() {
             ++i
         }
     }
-
-
-    /**
-     * Managing specific data whether the user is a student or a worker
-     */
-    private fun manageUserType(choiceId: Int) {
-        val studentGroup = findViewById<Group>(R.id.student_group)
-        val workerGroup = findViewById<Group>(R.id.worker_group)
-        if(choiceId == R.id.student_choice) {
-            studentGroup.visibility = View.VISIBLE
-            workerGroup.visibility = View.GONE
-            personType = PersonType.STUDENT
-        } else if(choiceId == R.id.worker_choice){
-            workerGroup.visibility = View.VISIBLE
-            studentGroup.visibility = View.GONE
-            personType = PersonType.WORKER
-        } else {
-            studentGroup.visibility = View.GONE
-            workerGroup.visibility = View.GONE
-            personType = PersonType.NONE
-        }
-    }
-
-
-
 
 
 
