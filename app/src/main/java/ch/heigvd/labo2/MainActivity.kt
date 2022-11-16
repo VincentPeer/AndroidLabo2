@@ -37,9 +37,6 @@ class MainActivity : AppCompatActivity() {
 
     private var personType: PersonType = PersonType.NONE
 
-    private var nationalitySelectedVal: String = ""
-
-    private var sectorSelected = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,47 +64,10 @@ class MainActivity : AppCompatActivity() {
             datePicker.show(supportFragmentManager, null)
         }
 
-        // Nationality selection
-        findViewById<Spinner>(R.id.nationality_spinner).onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    pos: Int,
-                    id: Long
-                ) {
-                    if (pos == 0)
-                        return
-                    nationalitySelectedVal = parent.getItemAtPosition(pos).toString()
-                }
-
-                // Does nothing if no selection was done, but the function is required
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                }
-            }
-
         // User type selection
         findViewById<RadioGroup>(R.id.radio_group).setOnCheckedChangeListener { _, choiceId ->
             manageUserType(choiceId)
         }
-
-        // Worker sector selection
-        findViewById<Spinner>(R.id.sector_spinner).onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    pos: Int,
-                    id: Long
-                ) {
-                    if (pos == 0)
-                        return
-                    sectorSelected = parent.getItemAtPosition(pos).toString()
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                }
-            }
 
         // Delete every field when cancel button is applied
         val btnCancel = findViewById<Button>(R.id.btn_cancel)
@@ -152,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                 findViewById<EditText>(R.id.main_base_name).text.toString(),
                 findViewById<EditText>(R.id.main_base_firstname).text.toString(),
                 Calendar.getInstance().apply{timeInMillis = datePicker.selection?:0},
-                nationalitySelectedVal,
+                findViewById<Spinner>(R.id.nationality_spinner).selectedItem.toString(),
                 findViewById<EditText>(R.id.main_specific_school).text.toString(),
                 findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt(),
                 findViewById<EditText>(R.id.additional_mail).text.toString(),
@@ -162,9 +122,9 @@ class MainActivity : AppCompatActivity() {
                 findViewById<EditText>(R.id.main_base_name).text.toString(),
                 findViewById<EditText>(R.id.main_base_firstname).text.toString(),
                 Calendar.getInstance().apply{timeInMillis = datePicker.selection?:0},
-                nationalitySelectedVal,
+                findViewById<Spinner>(R.id.nationality_spinner).selectedItem.toString(),
                 findViewById<EditText>(R.id.main_specific_compagny).text.toString(),
-                sectorSelected,
+                findViewById<Spinner>(R.id.sector_spinner).selectedItem.toString(),
                 findViewById<EditText>(R.id.main_specific_experience).text.toString().toInt(),
                 findViewById<EditText>(R.id.additional_mail).text.toString(),
                 findViewById<EditText>(R.id.additional_remarks).text.toString())
@@ -179,7 +139,6 @@ class MainActivity : AppCompatActivity() {
         if (
             findViewById<EditText>(R.id.main_base_name).text.isEmpty() ||
             findViewById<EditText>(R.id.main_base_firstname).text.isEmpty() ||
-            nationalitySelectedVal.isEmpty() ||
             findViewById<EditText>(R.id.additional_mail).text.isEmpty()
         ) {
             return false
@@ -187,7 +146,6 @@ class MainActivity : AppCompatActivity() {
 
         if (personType == PersonType.WORKER) {
             if (findViewById<EditText>(R.id.main_specific_compagny).text.isEmpty() ||
-                sectorSelected.isEmpty() ||
                 findViewById<EditText>(R.id.main_specific_experience).text.isEmpty()) {
                 return false
             }
