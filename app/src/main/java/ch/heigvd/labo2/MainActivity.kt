@@ -37,54 +37,22 @@ class MainActivity : AppCompatActivity() {
 
     private var personType: PersonType = PersonType.NONE
 
-    // General fields
-    private lateinit var nameField: EditText
-    private lateinit var firstnameField: EditText
-    private lateinit var birthdateField: EditText
-    private lateinit var nationalityField: Spinner
     private var nationalitySelectedVal: String = ""
-    private lateinit var remark: EditText
-    private lateinit var mailAddressField: EditText
 
-    // Student fields
-    private lateinit var schoolField: EditText
-    private lateinit var gradYearField: EditText
-    private lateinit var sectorField: Spinner
     private var sectorSelected = ""
-    private lateinit var experienceYearField: EditText
-
-    // Worker Fields
-    private lateinit var companyField: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // General fields initialisation
-        nameField = findViewById(R.id.main_base_name)
-        firstnameField = findViewById(R.id.main_base_firstname)
-        birthdateField = findViewById(R.id.main_base_birthdate)
-        remark = findViewById(R.id.additional_remarks)
-        mailAddressField = findViewById(R.id.additional_mail)
-        nationalityField = findViewById(R.id.nationality_spinner)
 
-        // Student fields initialisation
-        schoolField = findViewById(R.id.main_specific_school)
-        gradYearField = findViewById(R.id.main_specific_graduationyear)
-
-        // Worker fields initialisation
-        companyField = findViewById(R.id.main_specific_compagny)
-        sectorField = findViewById(R.id.sector_spinner)
-        experienceYearField = findViewById(R.id.main_specific_experience)
-
-        
 
         // Date selection
 
         val datePickerConstraints =
             CalendarConstraints.Builder()
-                .setStart(Calendar.getInstance().apply{add(Calendar.YEAR, -100)}.timeInMillis)
-                .setEnd(Calendar.getInstance().apply{add(Calendar.YEAR, -10)}.timeInMillis)
+                .setStart(Calendar.getInstance().apply { add(Calendar.YEAR, -100) }.timeInMillis)
+                .setEnd(Calendar.getInstance().apply { add(Calendar.YEAR, -10) }.timeInMillis)
                 .build()
 
         datePicker = MaterialDatePicker.Builder.datePicker()
@@ -101,16 +69,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Nationality selection
-        nationalityField.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-                if(pos == 0)
-                    return
-                nationalitySelectedVal = parent.getItemAtPosition(pos).toString()
+        findViewById<Spinner>(R.id.nationality_spinner).onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    pos: Int,
+                    id: Long
+                ) {
+                    if (pos == 0)
+                        return
+                    nationalitySelectedVal = parent.getItemAtPosition(pos).toString()
+                }
+
+                // Does nothing if no selection was done, but the function is required
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                }
             }
-            // Does nothing if no selection was done, but the function is required
-            override fun onNothingSelected(parent: AdapterView<*>) {
-            }
-        }
 
         // User type selection
         findViewById<RadioGroup>(R.id.radio_group).setOnCheckedChangeListener { _, choiceId ->
@@ -118,15 +93,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Worker sector selection
-        sectorField.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-                if(pos == 0)
-                    return
-                sectorSelected = parent.getItemAtPosition(pos).toString()
+        findViewById<Spinner>(R.id.sector_spinner).onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    pos: Int,
+                    id: Long
+                ) {
+                    if (pos == 0)
+                        return
+                    sectorSelected = parent.getItemAtPosition(pos).toString()
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                }
             }
-            override fun onNothingSelected(parent: AdapterView<*>) {
-            }
-        }
 
         // Delete every field when cancel button is applied
         val btnCancel = findViewById<Button>(R.id.btn_cancel)
@@ -154,7 +136,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun updateBirthdateTextField() {
-        birthdateField.setText(SimpleDateFormat(DATE_FORMAT, Locale.US).format(datePicker.selection).toString())
+        findViewById<EditText>(R.id.main_base_birthdate).setText(
+            SimpleDateFormat(
+                DATE_FORMAT,
+                Locale.US
+            ).format(datePicker.selection).toString()
+        )
     }
 
     /**
@@ -163,23 +150,25 @@ class MainActivity : AppCompatActivity() {
     private fun addNewPerson() {
         if(personType == PersonType.STUDENT) {
             person =  Student(
-                nameField.text.toString(),
-                firstnameField.text.toString(),
-                Calendar.getInstance().apply{timeInMillis = datePicker.selection?:0},
-                nationalitySelectedVal, schoolField.text.toString(),
-                gradYearField.text.toString().toInt(),
-                mailAddressField.text.toString(),
-                remark.text.toString())
-        } else if (personType == PersonType.WORKER) {
-            person = Worker(nameField.text.toString(),
-                firstnameField.text.toString(),
+                findViewById<EditText>(R.id.main_base_name).text.toString(),
+                findViewById<EditText>(R.id.main_base_firstname).text.toString(),
                 Calendar.getInstance().apply{timeInMillis = datePicker.selection?:0},
                 nationalitySelectedVal,
-                companyField.text.toString(),
+                findViewById<EditText>(R.id.main_specific_school).text.toString(),
+                findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt(),
+                findViewById<EditText>(R.id.additional_mail).text.toString(),
+                findViewById<EditText>(R.id.additional_remarks).text.toString())
+        } else if (personType == PersonType.WORKER) {
+            person = Worker(
+                findViewById<EditText>(R.id.main_base_name).text.toString(),
+                findViewById<EditText>(R.id.main_base_firstname).text.toString(),
+                Calendar.getInstance().apply{timeInMillis = datePicker.selection?:0},
+                nationalitySelectedVal,
+                findViewById<EditText>(R.id.main_specific_compagny).text.toString(),
                 sectorSelected,
-                experienceYearField.text.toString().toInt(),
-                mailAddressField.text.toString(),
-                remark.text.toString())
+                findViewById<EditText>(R.id.main_specific_experience).text.toString().toInt(),
+                findViewById<EditText>(R.id.additional_mail).text.toString(),
+                findViewById<EditText>(R.id.additional_remarks).text.toString())
         } else {
             throw Exception("Bad person type ... cannot create a Person object.")
         }
@@ -189,24 +178,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun noEmptyField(): Boolean {
         if (
-            nameField.text.isEmpty() ||
-                    firstnameField.text.isEmpty() ||
-                    nationalitySelectedVal.isEmpty() ||
-                    mailAddressField.text.isEmpty()
+            findViewById<EditText>(R.id.main_base_name).text.isEmpty() ||
+            findViewById<EditText>(R.id.main_base_firstname).text.isEmpty() ||
+            nationalitySelectedVal.isEmpty() ||
+            findViewById<EditText>(R.id.additional_mail).text.isEmpty()
         ) {
             return false
         }
 
         if (personType == PersonType.WORKER) {
-            if (companyField.text.isEmpty() ||
-                    sectorSelected.isEmpty() ||
-                    experienceYearField.text.isEmpty()) {
+            if (findViewById<EditText>(R.id.main_specific_compagny).text.isEmpty() ||
+                sectorSelected.isEmpty() ||
+                findViewById<EditText>(R.id.main_specific_experience).text.isEmpty()) {
                 return false
             }
         }
         if (personType == PersonType.STUDENT) {
-            if (schoolField.text.isEmpty() ||
-                    gradYearField.text.isEmpty()) {
+            if (findViewById<EditText>(R.id.main_specific_school).text.isEmpty() ||
+                findViewById<EditText>(R.id.main_specific_graduationyear).text.isEmpty()) {
                 return false
             }
         }
