@@ -87,10 +87,7 @@ class MainActivity : AppCompatActivity() {
 
     fun updateBirthdateTextField() {
         findViewById<EditText>(R.id.main_base_birthdate).setText(
-            SimpleDateFormat(
-                DATE_FORMAT,
-                Locale.US
-            ).format(datePicker.selection).toString()
+            SimpleDateFormat(DATE_FORMAT, Locale.US).format(datePicker.selection).toString()
         )
     }
 
@@ -105,8 +102,8 @@ class MainActivity : AppCompatActivity() {
      * Get data form the form to create a new Person
      */
     private fun addNewPerson() {
-        if(getPersonType() == PersonType.STUDENT) {
-            person =  Student(
+        person = when (getPersonType()) {
+            PersonType.STUDENT -> Student(
                 findViewById<EditText>(R.id.main_base_name).text.toString(),
                 findViewById<EditText>(R.id.main_base_firstname).text.toString(),
                 Calendar.getInstance().apply{timeInMillis = datePicker.selection?:0},
@@ -114,9 +111,10 @@ class MainActivity : AppCompatActivity() {
                 findViewById<EditText>(R.id.main_specific_school).text.toString(),
                 findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt(),
                 findViewById<EditText>(R.id.additional_mail).text.toString(),
-                findViewById<EditText>(R.id.additional_remarks).text.toString())
-        } else if (getPersonType() == PersonType.WORKER) {
-            person = Worker(
+                findViewById<EditText>(R.id.additional_remarks).text.toString()
+            )
+
+            PersonType.WORKER -> Worker(
                 findViewById<EditText>(R.id.main_base_name).text.toString(),
                 findViewById<EditText>(R.id.main_base_firstname).text.toString(),
                 Calendar.getInstance().apply{timeInMillis = datePicker.selection?:0},
@@ -125,13 +123,16 @@ class MainActivity : AppCompatActivity() {
                 findViewById<Spinner>(R.id.sector_spinner).selectedItem.toString(),
                 findViewById<EditText>(R.id.main_specific_experience).text.toString().toInt(),
                 findViewById<EditText>(R.id.additional_mail).text.toString(),
-                findViewById<EditText>(R.id.additional_remarks).text.toString())
-        } else {
-            throw Exception("Bad person type ... cannot create a Person object.")
+                findViewById<EditText>(R.id.additional_remarks).text.toString()
+            )
+
+            else -> throw Exception("Bad person type ... cannot create a Person object.")
         }
-        println(person)
+
         Log.d(LOG_TAG, person.toString())
     }
+
+
 
     private fun noEmptyField(): Boolean {
         if (
@@ -174,7 +175,6 @@ class MainActivity : AppCompatActivity() {
     private enum class PersonType {
         STUDENT,
         WORKER,
-        NONE
     }
 
     /**
