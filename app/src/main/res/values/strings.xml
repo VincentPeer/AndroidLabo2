@@ -23,9 +23,9 @@
 
     <string name="nationality_empty">Sélectionner</string>
     <string name="ch">Suisse</string>
-    <string name="fr">Française</string>
-    <string name="de">Allemande</string>
-    <string name="it">Italienne</string>
+    <string name="fr">Français</string>
+    <string name="de">Allemand</string>
+    <string name="it">Italien</string>
     <!-- ... -->
 
     <string name="main_specific_students_title">Données spécifiques (étudiants)</string>

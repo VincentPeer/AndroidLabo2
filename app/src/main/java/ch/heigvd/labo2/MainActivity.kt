@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
-import androidx.core.view.children
 import androidx.core.view.iterator
 import ch.heigvd.labo2.Model.Person
 import ch.heigvd.labo2.Model.Person.Companion.exampleWorker
@@ -26,14 +25,18 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 const val DATE_FORMAT = "dd MMMM yyyy"
 const val LOG_TAG = "MainActivity"
+
+private const val BIRTHDAY_KEY = "birthday"
 
 /**
  * Creates the form that need to be complete by a user, or print information from an existed user.
  */
 class MainActivity : AppCompatActivity() {
-    private lateinit var datePicker : MaterialDatePicker<Long?>
+
+    private var birthdateTimeStamp : Long? = null
 
     private lateinit var person: Person
 
@@ -41,29 +44,52 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        birthdateTimeStamp = savedInstanceState?.getLong(BIRTHDAY_KEY)
+        updateBirthdateTextField()
+
         // Date selection
 
-        datePicker = MaterialDatePicker.Builder.datePicker()
-            .setCalendarConstraints(
-                CalendarConstraints.Builder()
-                    .setStart(Calendar.getInstance().apply { add(Calendar.YEAR, -100) }.timeInMillis)
-                    .setEnd(Calendar.getInstance().apply { add(Calendar.YEAR, -10) }.timeInMillis)
-                    .build()
-            )
-            .build()
-
-        datePicker.addOnPositiveButtonClickListener {
-            updateBirthdateTextField()
-        }
 
         findViewById<ImageButton>(R.id.cake_button).setOnClickListener {
-            datePicker.show(supportFragmentManager, null)
+
+            val constraints = CalendarConstraints.Builder()
+                .setStart(Calendar.getInstance().apply { add(Calendar.YEAR, -100) }.timeInMillis)
+                .setEnd(Calendar.getInstance().apply { add(Calendar.YEAR, -10) }.timeInMillis)
+                .build()
+
+            MaterialDatePicker.Builder.datePicker()
+                .setCalendarConstraints(constraints)
+                .setSelection(birthdateTimeStamp ?: Calendar.getInstance().timeInMillis)
+                .build()
+                .apply{
+                    addOnPositiveButtonClickListener {
+                        birthdateTimeStamp = it
+                        updateBirthdateTextField()
+                    }
+                    show(supportFragmentManager, null)
+                }
+        }
+
+        // User type selection
+        findViewById<RadioGroup>(R.id.radio_group).setOnCheckedChangeListener { _, _ ->
+            findViewById<Group>(R.id.student_group).visibility =
+                if (getPersonType() == PersonType.STUDENT) View.VISIBLE else View.GONE
+            findViewById<Group>(R.id.worker_group).visibility =
+                if (getPersonType() == PersonType.WORKER) View.VISIBLE else View.GONE
         }
 
         // Delete every field when cancel button is applied
         val btnCancel = findViewById<Button>(R.id.btn_cancel)
         btnCancel.setOnClickListener {
-            clearForm()
+            for (view in findViewById<ViewGroup>(R.id.main_layout))
+                when (view) {
+                    is EditText -> view.setText("")
+                    is Spinner -> view.setSelection(0) // Reset to "selection" state
+                    is RadioGroup -> view.clearCheck() // Reset radioGroup with no state chosen
+                }
+
+            birthdateTimeStamp = null
+            updateBirthdateTextField()
         }
 
         // Create a new person from written data when ok button ok is applied
@@ -80,14 +106,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Test with existing user
-        //readFromExistingUser(exampleStudent)
-        readFromExistingUser(exampleWorker)
+//        readFromExistingUser(exampleStudent)
+//        readFromExistingUser(exampleWorker)
 
     }
 
-    fun updateBirthdateTextField() {
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (birthdateTimeStamp != null)
+            outState.putLong(BIRTHDAY_KEY, birthdateTimeStamp!!)
+    }
+
+    private fun updateBirthdateTextField() {
         findViewById<EditText>(R.id.main_base_birthdate).setText(
-            SimpleDateFormat(DATE_FORMAT, Locale.US).format(datePicker.selection).toString()
+            if (birthdateTimeStamp == null) ""
+            else SimpleDateFormat(DATE_FORMAT, Locale.US).format(birthdateTimeStamp).toString()
         )
     }
 
@@ -106,7 +139,7 @@ class MainActivity : AppCompatActivity() {
             PersonType.STUDENT -> Student(
                 findViewById<EditText>(R.id.main_base_name).text.toString(),
                 findViewById<EditText>(R.id.main_base_firstname).text.toString(),
-                Calendar.getInstance().apply{timeInMillis = datePicker.selection?:0},
+                Calendar.getInstance().apply{timeInMillis = birthdateTimeStamp?:0},
                 findViewById<Spinner>(R.id.nationality_spinner).selectedItem.toString(),
                 findViewById<EditText>(R.id.main_specific_school).text.toString(),
                 findViewById<EditText>(R.id.main_specific_graduationyear).text.toString().toInt(),
@@ -117,7 +150,7 @@ class MainActivity : AppCompatActivity() {
             PersonType.WORKER -> Worker(
                 findViewById<EditText>(R.id.main_base_name).text.toString(),
                 findViewById<EditText>(R.id.main_base_firstname).text.toString(),
-                Calendar.getInstance().apply{timeInMillis = datePicker.selection?:0},
+                Calendar.getInstance().apply{timeInMillis = birthdateTimeStamp?:0},
                 findViewById<Spinner>(R.id.nationality_spinner).selectedItem.toString(),
                 findViewById<EditText>(R.id.main_specific_compagny).text.toString(),
                 findViewById<Spinner>(R.id.sector_spinner).selectedItem.toString(),
@@ -158,18 +191,6 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    /**
-     * Clears every flied of editText and put spinners to the default value
-     */
-    private fun clearForm() {
-        for (view in findViewById<ViewGroup>(R.id.main_layout))
-            when (view) {
-                is EditText -> view.setText("")
-                is Spinner -> view.setSelection(0) // Reset to "selection" state
-                is RadioGroup -> view.clearCheck() // Reset radioGroup with no state chosen
-        }
-    }
-
 
 
     private enum class PersonType {
@@ -188,46 +209,50 @@ class MainActivity : AppCompatActivity() {
         findViewById<EditText>(R.id.main_base_firstname).setText(person.firstName)
         findViewById<EditText>(R.id.additional_mail).setText(person.email)
         findViewById<EditText>(R.id.additional_remarks).setText(person.remark)
-        findViewById<Spinner>(R.id.nationality_spinner).setSelection(findPositionInSpinner(person.nationality))
 
         // Set birthday
-        val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.US)
-        findViewById<EditText>(R.id.main_base_birthdate).setText(sdf.format(person.birthDay.time))
+        birthdateTimeStamp = person.birthDay.timeInMillis
+        updateBirthdateTextField()
 
         // Set nationality
+        val adapterNationality = ArrayAdapter.createFromResource(
+            this,
+            R.array.nationalities,
+            android.R.layout.simple_spinner_item
+        )
+        adapterNationality.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        findViewById<Spinner>(R.id.nationality_spinner).apply {
+            adapter = adapterNationality
+            setSelection(adapterNationality.getPosition(person.nationality))
+        }
 
         // Set specific data
         val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
-        if(getUserType(person) == Student::class.java) {
-            person as Student
-            radioGroup.check(R.id.student_choice)
-            findViewById<EditText>(R.id.main_specific_school).setText(person.university)
-            findViewById<EditText>(R.id.main_specific_graduationyear).setText(person.graduationYear.toString())
-        } else {
-            person as Worker
-            radioGroup.check(R.id.worker_choice)
-            findViewById<EditText>(R.id.main_specific_compagny).setText(person.company)
-            findViewById<EditText>(R.id.main_specific_experience).setText(person.experienceYear.toString())
-        }
-    }
+        when (person) {
+            is Student -> {
+                radioGroup.check(R.id.student_choice)
+                findViewById<EditText>(R.id.main_specific_school).setText(person.university)
+                findViewById<EditText>(R.id.main_specific_graduationyear).setText(person.graduationYear.toString())
+            }
+            is Worker -> {
+                radioGroup.check(R.id.worker_choice)
+                findViewById<EditText>(R.id.main_specific_compagny).setText(person.company)
+                findViewById<EditText>(R.id.main_specific_experience).setText(person.experienceYear.toString())
 
-    /**
-     * Return the class type of the user
-     */
-    private fun getUserType(person: Person) : Class<*> {
-        return if(person is Student) {
-            Student::class.java
-        } else if(person is Worker) {
-            Worker::class.java
-        } else { // todo exception ou rien faire?
-            throw java.lang.RuntimeException("Invalid user type")
-        }
-    }
+                val adapterSector = ArrayAdapter.createFromResource(
+                    this,
+                    R.array.sectors,
+                    android.R.layout.simple_spinner_item
+                )
+                adapterSector.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-    // TODO à quoi ça sert ???
-    private fun findPositionInSpinner(string: String) : Int {
-        val a = arrayOf(R.array.nationalities)
-        findViewById<Spinner>(R.id.nationality_spinner).setSelection(a[0])
-        return  0
+                findViewById<Spinner>(R.id.sector_spinner).apply {
+                    adapter = adapterSector
+                    setSelection(adapterSector.getPosition(person.sector))
+                }
+            }
+        }
+
     }
 }
