@@ -31,7 +31,8 @@ const val LOG_TAG = "MainActivity"
  * Creates the form that need to be complete by a user, or print information from an existed user.
  */
 class MainActivity : AppCompatActivity() {
-    private lateinit var customDatePickerBuilder: CustomDatePickerBuilder
+    private lateinit var datePicker : MaterialDatePicker<Long?>
+
     private lateinit var person: Person
 
     private var personType: PersonType = PersonType.NONE
@@ -76,13 +77,27 @@ class MainActivity : AppCompatActivity() {
         sectorField = findViewById(R.id.sector_spinner)
         experienceYearField = findViewById(R.id.main_specific_experience)
 
+        
 
         // Date selection
-        customDatePickerBuilder = CustomDatePickerBuilder(
-            MaterialDatePicker.Builder.datePicker())
+
+        val datePickerConstraints =
+            CalendarConstraints.Builder()
+                .setStart(Calendar.getInstance().apply{add(Calendar.YEAR, -100)}.timeInMillis)
+                .setEnd(Calendar.getInstance().apply{add(Calendar.YEAR, -10)}.timeInMillis)
+                .build()
+
+        datePicker = MaterialDatePicker.Builder.datePicker()
+            .setCalendarConstraints(datePickerConstraints)
+            .build()
+
+        datePicker.addOnPositiveButtonClickListener {
+            updateBirthdateTextField()
+        }
+
 
         findViewById<ImageButton>(R.id.cake_button).setOnClickListener {
-            customDatePickerBuilder.getPicker().show(supportFragmentManager, null)
+            datePicker.show(supportFragmentManager, null)
         }
 
         // Nationality selection
@@ -138,6 +153,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun updateBirthdateTextField() {
+        birthdateField.setText(SimpleDateFormat(DATE_FORMAT, Locale.US).format(datePicker.selection).toString())
+    }
 
     /**
      * Get data form the form to create a new Person
@@ -147,7 +165,7 @@ class MainActivity : AppCompatActivity() {
             person =  Student(
                 nameField.text.toString(),
                 firstnameField.text.toString(),
-                customDatePickerBuilder.getCalendar(),
+                Calendar.getInstance().apply{timeInMillis = datePicker.selection?:0},
                 nationalitySelectedVal, schoolField.text.toString(),
                 gradYearField.text.toString().toInt(),
                 mailAddressField.text.toString(),
@@ -155,7 +173,7 @@ class MainActivity : AppCompatActivity() {
         } else if (personType == PersonType.WORKER) {
             person = Worker(nameField.text.toString(),
                 firstnameField.text.toString(),
-                customDatePickerBuilder.getCalendar(),
+                Calendar.getInstance().apply{timeInMillis = datePicker.selection?:0},
                 nationalitySelectedVal,
                 companyField.text.toString(),
                 sectorSelected,
@@ -238,69 +256,8 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private inner class CustomDatePickerBuilder(
-        val matDatePicker: MaterialDatePicker.Builder<Long>
-        ) {
-        private val maxAge = 80
-        private val minAge = 15
-        private val today = MaterialDatePicker.todayInUtcMilliseconds()
 
-        private var constraints = CalendarConstraints.Builder()
 
-        // TODO comment faire ça proprement ???
-        fun getCalendar(): Calendar {
-            val sdf = SimpleDateFormat(DATE_FORMAT, Locale.US)
-            if (!birthdateField.text.isEmpty()) {
-                sdf.parse(birthdateField.text.toString())
-                return sdf.calendar
-            } else {
-                return Calendar.getInstance()
-            }
-        }
-
-        fun getPicker(): MaterialDatePicker<Long> {
-
-            val openAt: Calendar
-            val sdf = SimpleDateFormat(DATE_FORMAT, Locale.US)
-            if (!birthdateField.text.isEmpty()) {
-                sdf.parse(birthdateField.text.toString())
-                openAt = sdf.calendar
-            } else {
-                openAt = endDate()
-            }
-
-            constraints
-                .setOpenAt(openAt.timeInMillis)
-                .setStart(startDate().timeInMillis)
-                .setEnd(endDate().timeInMillis)
-
-            val picker = matDatePicker
-                .setCalendarConstraints(constraints.build())
-                .build()
-
-            picker.addOnPositiveButtonClickListener {
-                val parser = SimpleDateFormat(DATE_FORMAT, Locale.US)
-                val date = parser.format(it)
-                birthdateField.setText(date.toString())
-            }
-
-            return picker
-        }
-
-        private fun startDate(): Calendar {
-            val out = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-            out.timeInMillis = today
-            out[Calendar.YEAR] = out[Calendar.YEAR] - maxAge
-            return out
-        }
-
-        private fun endDate(): Calendar {
-            val out = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-            out.timeInMillis = today
-            out[Calendar.YEAR] = out[Calendar.YEAR] - minAge
-            return out
-        }
-    }
 
     private enum class PersonType {
         STUDENT,
