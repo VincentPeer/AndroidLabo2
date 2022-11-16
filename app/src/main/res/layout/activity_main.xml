@@ -12,16 +12,6 @@
 
 
     <!-- BASE DATA -->
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/base_data_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:constraint_referenced_ids="data_barrier, main_base_title, main_base_name_title,
-            main_base_name, main_base_firstname_title, main_base_firstname,
-        main_base_birthdate_title, main_base_birthdate, cake_button, main_base_nationality_title,
-        nationality_spinner, main_base_occupation_title, radio_group"/>
-
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/data_barrier"
         android:layout_width="wrap_content"
@@ -29,7 +19,8 @@
         app:barrierDirection="end"
         app:barrierMargin="@dimen/barrier_margin"
         app:constraint_referenced_ids="main_base_name_title, main_base_firstname_title,
-        main_base_birthdate_title, main_base_nationality_title, main_base_occupation_title"/>
+        main_base_birthdate_title, main_base_nationality_title, main_base_occupation_title,
+        additional_email_title, additional_remarks_title"/>
 
     <TextView
         android:id="@+id/main_base_title"
@@ -46,7 +37,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/main_base_name_title"
-        android:lines="1"
         app:layout_constraintTop_toBottomOf="@id/main_base_title"
         app:layout_constraintStart_toStartOf="parent"
         android:paddingTop="@dimen/textview_padding"/>
@@ -59,7 +49,7 @@
         android:inputType="text"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/main_base_name_title"
+        app:layout_constraintTop_toTopOf="@id/main_base_name_title"
 
         />
 
@@ -77,11 +67,11 @@
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:hint="@string/main_base_firstname_title"
-        android:maxLines="1"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/data_barrier"
-        app:layout_constraintBottom_toBottomOf="@id/main_base_firstname_title"/>
+        app:layout_constraintTop_toTopOf="@id/main_base_firstname_title"
+        />
 
     <TextView
         android:id="@+id/main_base_birthdate_title"
@@ -99,9 +89,8 @@
         android:focusable="false"
         android:hint="@string/main_base_birthdate_title"
         android:inputType="date"
-        app:layout_constraintBottom_toBottomOf="@id/main_base_birthdate_title"
+        app:layout_constraintTop_toTopOf="@id/main_base_birthdate_title"
         app:layout_constraintEnd_toStartOf="@id/cake_button"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/data_barrier" />
 
     <ImageButton
@@ -170,11 +159,6 @@
 
 
     <!-- ADDITIONAL DATA -->
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/additionnal_data_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"/>
     <TextView
         android:id="@+id/additional_title"
         android:text="@string/additional_title"
@@ -205,7 +189,7 @@
         android:inputType="textEmailAddress"
         app:layout_constraintStart_toEndOf="@id/data_barrier"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/additional_email_title"
+        app:layout_constraintTop_toTopOf="@id/additional_email_title"
         />
 
     <TextView
